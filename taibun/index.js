@@ -59,7 +59,11 @@ class Tokeniser {
 				traditional = "";
 			}
 		}
-		return tokenised;
+		const punctuations = /([.,!?\"#$%&()*+/:;<=>@[\\\]^`{|}~\t。．，、！？；：（）［］【】「」“”])/;
+		const indices = [0].concat(tokenised.map(item => item.length));
+		tokenised = indices.slice(0, -1).map((_, i) => input.substring(indices.slice(0, i + 1).reduce((a, b) => a + b, 0), indices.slice(0, i + 1).reduce((a, b) => a + b, 0) + indices[i + 1]));
+		tokenised = tokenised.flatMap(word => word.split(punctuations).flatMap(subword => subword ? subword.split(" ").filter(Boolean) : []));
+		return tokenised.flatMap(word => (word.endsWith('的') || word.endsWith('矣')) && word.length > 1 ? [word.slice(0, -1), word.slice(-1)] : [word]);
 	}
 }
 
