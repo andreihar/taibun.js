@@ -30,7 +30,41 @@ function toSimplified(input) {
 	return [...input].map(c => simplifiedDict[c] || c).join('');
 }
 
+
+// const re = require('re');
+class Tokeniser {
+	constructor() { }
+
+	// Tokenise the text into separate words
+	tokenise(input) {
+		let tokenised = [];
+		let traditional = toTraditional(input);
+		while (traditional) {
+			for (let j = 4; j > 0; j--) {
+				if (traditional.length < j) {
+					continue;
+				}
+				let word = traditional.slice(0, j);
+				if (wordDict[word] || j === 1) {
+					if (j === 1 && tokenised.length && !(isCjk(tokenised[tokenised.length - 1]) || isCjk(word))) {
+						tokenised[tokenised.length - 1] += word;
+					} else {
+						tokenised.push(word);
+					}
+					traditional = traditional.slice(j);
+					break;
+				}
+			}
+			if (traditional.length === 0) {
+				traditional = "";
+			}
+		}
+		return tokenised;
+	}
+}
+
 module.exports = {
+	Tokeniser,
 	isCjk,
 	toTraditional,
 	toSimplified
