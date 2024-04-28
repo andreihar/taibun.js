@@ -1,4 +1,4 @@
-const { Tokeniser } = require('./taibun/index.js');
+const { Tokeniser } = require('taibun');
 const t = new Tokeniser();
 
 test('general tokenisation', () => {
