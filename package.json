@@ -21,5 +21,8 @@
   "homepage": "https://github.com/andreihar/taibun.js#readme",
   "devDependencies": {
     "jest": "^29.7.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
