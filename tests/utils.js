@@ -2,9 +2,9 @@ function checker(array, generalConverter, northConverter) {
 	array.forEach(word => {
 		const [hanji, transl] = word.split(',').map(str => str.trim());
 		const translArray = transl.split('/');
-		expect(translArray[0]).toBe(generalConverter.get(hanji));
+		expect(generalConverter.get(hanji)).toBe(translArray[0]);
 		if (translArray.length > 1) {
-			expect(translArray[1]).toBe(northConverter.get(hanji));
+			expect(northConverter.get(hanji)).toBe(translArray[1]);
 		}
 	});
 }

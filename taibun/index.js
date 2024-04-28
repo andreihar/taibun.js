@@ -44,8 +44,8 @@ class Converter {
 		this.system = system.toLowerCase();
 		this.dialect = dialect.toLowerCase();
 		this.format = format;
-		this.delimiter = '-';// this.delimiter = delimiter;
-		this.sandhi = sandhi;
+		this.delimiter = delimiter !== Converter.defaultDelimiter ? delimiter : this.setDefaultDelimiter();
+		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
 		this.punctuation = punctuation;
 		this.convert_non_cjk = convert_non_cjk;
 	}
@@ -56,7 +56,6 @@ class Converter {
 	// Convert tokenised text into specified transliteration system
 	get(input) {
 		let converted = new (require('./index.js').Tokeniser)().tokenise(toTraditional(input));
-		// return this.toneSandhiPosition(converted);
 		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
 		return converted;
 	}
@@ -104,13 +103,22 @@ class Converter {
 
 	// Helper functions to set delimiter according to transliteration system if wasn't explicitly defined by user
 	setDefaultDelimiter() {
-		return "";
+		if (this.system === 'tlpa' || this.system === 'zhuyin' || this.system === 'ipa') {
+			return ' ';
+		}
+		if (this.system === 'pingyim') {
+			return '';
+		}
+		return '-';
 	}
 
 
 	// Helper functions to set sandhi according to transliteration system if wasn't explicitly defined by user
 	setDefaultSandhi() {
-		return "";
+		if (this.system === 'tongiong') {
+			return 'auto';
+		}
+		return 'none';
 	}
 
 
