@@ -55,7 +55,7 @@ class Converter {
 
 	// Convert tokenised text into specified transliteration system
 	get(input) {
-		return "";
+		return input;
 	}
 
 
@@ -63,13 +63,13 @@ class Converter {
 
 	// Helper to convert separate words
 	convertTokenised(word) {
-		return "";
+		return word;
 	}
 
 
 	// Helper switch for converting 漢字 based on defined transliteration system
 	systemConversion(word) {
-		return "";
+		return word;
 	}
 
 
@@ -89,49 +89,49 @@ class Converter {
 
 	// Helper to get number tones
 	getNumberTones(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert between transliteration systems
 	replacementTool(dictionary, input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert word from Tai-lo to number
 	markToNumber(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo diacritic tones to number tones
 	getNumberTone(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to break down a word into syllables for conversion
 	preprocessWord(word) {
-		return "";
+		return word;
 	}
 
 
 	// Helper to convert syllable from Tai-lo number tones to diacritic tones
 	getMarkTone(input, placement, tones) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to apply tone sandhi to a word
 	toneSandhi(word, last) {
-		return "";
+		return word;
 	}
 
 
 	// Helpre to define which words should be sandhi'd fully
 	toneSandhiPosition(input) {
-		return "";
+		return input;
 	}
 
 
@@ -140,43 +140,43 @@ class Converter {
 	// Helper to convert syllable from Tai-lo to Tai-lo
 	// (called only in cases when tone sandhi is applied)
 	tailoToTailo(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to POJ
 	tailoToPoj(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to 方音符號 (zhuyin)
 	tailoToZhuyin(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to TLPA
 	tailoToTlpa(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to Bbanlam pingyim
-	tailoToBbanlam(input) {
-		return "";
+	tailoToPingyim(input) {
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to Tong-iong ping-im
 	tailoToTi(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to convert syllable from Tai-lo to International Phonetic Alphabet
 	tailoToIpa(input) {
-		return "";
+		return input;
 	}
 
 
@@ -184,19 +184,19 @@ class Converter {
 
 	// Helper to convert Chinese punctuation to Latin punctuation with appropriate spacing
 	formatPunctuationWestern(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to restore original CJK punctuation with appropriate spacing
 	formatPunctuationCJK(input) {
-		return "";
+		return input;
 	}
 
 
 	// Helper to capitalise text in according to punctuation
 	formatText(input) {
-		return "";
+		return input;
 	}
 }
 
@@ -237,6 +237,7 @@ class Tokeniser {
 }
 
 module.exports = {
+	Converter,
 	Tokeniser,
 	isCjk,
 	toTraditional,
