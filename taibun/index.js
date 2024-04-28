@@ -32,19 +32,19 @@ function toSimplified(input) {
 
 
 class Converter {
-	static suffix_token = '[ЅFFX_ТКŊ]';
+	static suffixToken = '[ЅFFX_ТКŊ]';
 	static tt = '[ТŊ_ТКŊ]';
-	static DEFAULT_DELIMITER = {};
-	static DEFAULT_SANDHI = {};
-	static __suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖', '的'];
-	static __no_sandhi = ['這', '彼', '遮', '遐'];
-	static __location = ['頂', '跤', '外', '內'];
+	static defaultDelimiter = {};
+	static defaultSandhi = {};
+	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖', '的'];
+	static noSandhi = ['這', '彼', '遮', '遐'];
+	static location = ['頂', '跤', '外', '內'];
 
-	constructor(system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.DEFAULT_DELIMITER, sandhi = Converter.DEFAULT_SANDHI, punctuation = 'format', convert_non_cjk = false) {
+	constructor(system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convert_non_cjk = false) {
 		this.system = system.toLowerCase();
 		this.dialect = dialect.toLowerCase();
 		this.format = format;
-		this.delimiter = delimiter;
+		this.delimiter = '-';// this.delimiter = delimiter;
 		this.sandhi = sandhi;
 		this.punctuation = punctuation;
 		this.convert_non_cjk = convert_non_cjk;
@@ -55,7 +55,10 @@ class Converter {
 
 	// Convert tokenised text into specified transliteration system
 	get(input) {
-		return input;
+		let converted = new (require('./index.js').Tokeniser)().tokenise(toTraditional(input));
+		// return this.toneSandhiPosition(converted);
+		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
+		return converted;
 	}
 
 
@@ -63,13 +66,39 @@ class Converter {
 
 	// Helper to convert separate words
 	convertTokenised(word) {
-		return word;
+		if (word[0] in wordDict) {
+			word = [wordDict[word[0]], ...word.slice(1)];
+			if (word[0].includes("/")) {
+				let dialectPart = this.dialect === 'north' ? word[0].split("/")[1] : word[0].split("/")[0];
+				word = [dialectPart, ...word.slice(1)];
+			}
+		} else if (!this.convertNonCjk) {
+			return word[0];
+		}
+		word = this.systemConversion(word).replace('---', '--');
+		if (this.format === 'number' && ['tailo', 'poj'].includes(this.system)) {
+			word = this.markToNumber(word);
+		}
+		if (this.format === 'strip') {
+			if (this.system === 'tlpa') {
+				word = word.replace(/[1234578]/g, '');
+			}
+			if (this.system === 'zhuyin') {
+				word = word.replace(/[ˋ˪ˊ˫˙]/g, '');
+			}
+			if (this.system === 'ipa') {
+				word = word.replace(/[¹²³⁴⁵]/g, '');
+			} else {
+				word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+			}
+		}
+		return word.replace('--', this.suffixToken).replace('-', this.delimiter).replace(this.suffixToken, '--');
 	}
 
 
 	// Helper switch for converting 漢字 based on defined transliteration system
 	systemConversion(word) {
-		return word;
+		return word[0];
 	}
 
 
@@ -131,7 +160,31 @@ class Converter {
 
 	// Helpre to define which words should be sandhi'd fully
 	toneSandhiPosition(input) {
-		return input;
+		const sandhiLogic = {
+			'exc_last': input.map((char, i) => [char, i !== input.length - 1]),
+			'incl_last': input.map(char => [char, true]),
+		};
+		let resultList = [];
+		for (let i = 0; i < input.length; i++) {
+			let result;
+			if (i < input.length - 1 && Converter.location.includes(input[i + 1])) {
+				result = false;
+			} else if (Converter.location.includes(input[i]) || Converter.noSandhi.includes(input[i])) {
+				result = false;
+			} else if (input[i].length > 1 && input[i].endsWith("仔")) {
+				result = "a suff";
+			} else {
+				result = i < input.length - 1 && isCjk(input[i + 1]);
+			}
+			resultList.push([input[i], result]);
+		}
+		resultList = sandhiLogic[this.sandhi] || resultList;
+		for (let i = resultList.length - 2; i >= 0; i--) {
+			if (Converter.suffixes.includes(resultList[i + 1][0])) {
+				resultList[i] = [resultList[i][0], false];
+			}
+		}
+		return resultList;
 	}
 
 
