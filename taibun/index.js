@@ -243,9 +243,9 @@ class Converter {
 			'o' + Converter.tt, 'o͘' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
 		];
 		let convert = { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' };
-		let tones = ['', '', '́', '̀', '', '̂', '', '̄', '̍', ''];
+		const tones = ['', '', '́', '̀', '', '̂', '', '̄', '̍', ''];
 		placement = placement.concat(placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		convert = { ...convert, ...Object.entries(convert).reduce((acc, [k, v]) => ({ ...acc, [k.charAt(0).toUpperCase() + k.slice(1)]: v.charAt(0).toUpperCase() + v.slice(1) }), {}) };
+		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
 		input = this.getNumberTones(input).map(nt => {
 			let replaced = this.replacementTool(convert, nt);
 			return this.getMarkTone(replaced, placement, tones);
@@ -296,7 +296,53 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to Bbanlam pingyim
 	tailoToPingyim(input) {
-		return input;
+		let placement = [
+			'ua' + Converter.tt + 'i', 'ia' + Converter.tt + 'o', 'a' + Converter.tt + 'i', 'a' + Converter.tt + 'o',
+			'oo' + Converter.tt, 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt,
+			'a' + Converter.tt, 'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt, 'n' + Converter.tt
+		];
+		let convert = {
+			'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8',
+			'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne',
+			'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c',
+			'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb',
+			't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn'
+		};
+		const tones = ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', ''];
+		placement = placement.concat(placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		let output = [];
+		for (let nt of this.getNumberTones(input)) {
+			let replaced = this.replacementTool(convert, nt);
+			if (['i', 'I'].includes(replaced[0])) {
+				replaced = (replaced[0] == 'I' ? 'Y' : 'y') + (['a', 'u', 'o'].includes(replaced[1]) ? replaced.slice(1) : replaced.toLowerCase());
+			}
+			if (['u', 'U'].includes(replaced[0])) {
+				replaced = (replaced[0] == 'U' ? 'W' : 'w') + (nt.length > 2 && ['a', 'i', 'e', 'o'].includes(replaced[1]) ? replaced.slice(1) : replaced.toLowerCase());
+			}
+			if (['m', 'M'].includes(nt[0])) {
+				if (nt.length == 2) {
+					replaced = nt[0] + nt[nt.length - 1];
+				} else if (nt[1] == 'n') {
+					replaced = nt[0] + replaced.slice(3);
+				}
+			}
+			if (nt.slice(-3, -1) == 'ng' || nt.slice(-3, -1) == 'Ng') {
+				replaced = replaced.slice(0, -4) + nt.slice(-3, -1) + nt[nt.length - 1];
+			}
+			if (replaced.slice(-4, -1) == 'bbn') {
+				replaced = replaced.replace('bbn', 'm', 1);
+			}
+			if (replaced.slice(-3, -1) == 'ln') {
+				replaced = replaced.slice(0, -3) + 'n' + replaced[replaced.length - 1];
+			}
+			if (this.format != 'number') {
+				output.push(this.getMarkTone(replaced, placement, tones));
+			} else {
+				output.push(replaced);
+			}
+		}
+		return output.join('-').replace(Converter.suffixToken, '');
 	}
 
 
