@@ -250,7 +250,7 @@ class Converter {
 			let replaced = this.replacementTool(convert, nt);
 			return this.getMarkTone(replaced, placement, tones);
 		}).join('-');
-		return input.replace(new RegExp(Converter.suffixToken, 'g'), '--');
+		return input.replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
 	}
 
 
