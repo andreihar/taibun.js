@@ -103,7 +103,7 @@ class Converter {
 		if (this.system === 'pingyim') return this.tailoToPingyim(word);
 		if (this.system === 'tongiong') return this.tailoToTi(word);
 		if (this.system === 'ipa') return this.tailoToIpa(word);
-		if (['auto', 'exc_last', 'incl_last'].includes(this.sandhi)) return this.tailoToTailo(word);
+		if (['auto', 'excLast', 'inclLast'].includes(this.sandhi)) return this.tailoToTailo(word);
 		else return word[0];
 	}
 
@@ -135,6 +135,17 @@ class Converter {
 	getNumberTones(input) {
 		const words = this.preprocessWord(input[0]);
 		let numberTones = words.filter(w => w.length > 0).map(w => this.getNumberTone(w));
+		if (this.sandhi === 'auto' || this.sandhi === 'excLast' || this.sandhi === 'inclLast' || this.format === 'number') {
+			let replaceWithZero = false;
+			numberTones = numberTones.map(s => replaceWithZero || (replaceWithZero = s[s.length - 1] === '0') ? s.slice(0, -1) + '0' : s);
+		}
+		if (this.sandhi === 'auto' || this.sandhi === 'excLast' || this.sandhi === 'inclLast') {
+			let index = numberTones.findIndex(s => s.startsWith(this.suffixToken));
+			if (index === -1) {
+				index = numberTones.length;
+			}
+			numberTones = index !== numberTones.length && numberTones.length > 1 ? this.toneSandhi(numberTones.slice(0, index), false).concat(numberTones.slice(index)) : this.toneSandhi(numberTones, input[1]);
+		}
 		return numberTones;
 	}
 
@@ -162,7 +173,7 @@ class Converter {
 		else if (/̍/.test(input)) input += '8';
 		else if (finals.includes(input[input.length - 1])) input += '4';
 		else input += '1';
-		if (input.startsWith(Converter.suffixToken) && (input[input.length - 2] === 'h' || ['auto', 'exc_last', 'incl_last'].includes(this.sandhi) || this.format === 'number')) {
+		if (input.startsWith(Converter.suffixToken) && (input[input.length - 2] === 'h' || ['auto', 'excLast', 'inclLast'].includes(this.sandhi) || this.format === 'number')) {
 			input = input.slice(0, -1) + '0';
 		}
 		input = Array.from(input.normalize("NFD")).filter(c => !/[\u0300-\u036f]/.test(c)).join('');
@@ -190,16 +201,29 @@ class Converter {
 
 
 	// Helper to apply tone sandhi to a word
-	toneSandhi(word, last) {
-		return word;
+	toneSandhi(words, last) {
+		let sandhi = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
+		const aSandhi = { '1': '7', '2': '1', '3': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '1', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '7' };
+		if (this.dialect === 'north') {
+			sandhi['5'] = '3';
+		}
+		const indices = last === 'a suff' && words.length > 1 ? [...Array(words.length - 2).keys()] : (!last ? [...Array(words.length - 1).keys()] : [...Array(words.length).keys()]);
+		let sandhiWords = indices.map(i => this.replacementTool(sandhi, words[i]));
+		if (last === 'a suff' && words.length > 1) {
+			sandhiWords.push(this.replacementTool(aSandhi, words[words.length - 2]));
+		}
+		if (!last || last === 'a suff') {
+			sandhiWords.push(words[words.length - 1]);
+		}
+		return sandhiWords;
 	}
 
 
 	// Helpre to define which words should be sandhi'd fully
 	toneSandhiPosition(input) {
 		const sandhiLogic = {
-			'exc_last': input.map((char, i) => [char, i !== input.length - 1]),
-			'incl_last': input.map(char => [char, true]),
+			'excLast': input.map((char, i) => [char, i !== input.length - 1]),
+			'inclLast': input.map(char => [char, true]),
 		};
 		let resultList = [];
 		for (let i = 0; i < input.length; i++) {
@@ -230,7 +254,15 @@ class Converter {
 	// Helper to convert syllable from Tai-lo to Tai-lo
 	// (called only in cases when tone sandhi is applied)
 	tailoToTailo(input) {
-		return input;
+		const placement = [
+			'ia' + Converter.tt + 'u', 'ua' + Converter.tt + 'i', 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt, 'a' + Converter.tt + 'i',
+			'a' + Converter.tt + 'u', 'o' + Converter.tt + 'o', 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'o' + Converter.tt + 'o', 'a' + Converter.tt,
+			'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
+		];
+		const tones = ["", "", "́", "̀", "", "̂", "̌", "̄", "̍", "̋"];
+		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		input = this.getNumberTones(input).map(nt => this.getMarkTone(nt, placement, tones)).join('-');
+		return input.replace(Converter.suffixToken, '--');
 	}
 
 
