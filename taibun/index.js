@@ -36,7 +36,7 @@ class Converter {
 	static tt = '[ТŊ_ТКŊ]';
 	static defaultDelimiter = {};
 	static defaultSandhi = {};
-	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖', '的'];
+	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖'];
 	static noSandhi = ['這', '彼', '遮', '遐'];
 	static location = ['頂', '跤', '外', '內'];
 
