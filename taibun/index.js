@@ -141,7 +141,8 @@ class Converter {
 
 	// Helper to convert between transliteration systems
 	replacementTool(dictionary, input) {
-		return input;
+		let pattern = new RegExp(Object.keys(dictionary).join('|'), 'g');
+		return input.replace(pattern, (match) => dictionary[match]);
 	}
 
 
@@ -161,7 +162,7 @@ class Converter {
 		else if (/̍/.test(input)) input += '8';
 		else if (finals.includes(input[input.length - 1])) input += '4';
 		else input += '1';
-		if (input.startsWith(this.suffixToken) && (input[input.length - 2] === 'h' || ['auto', 'exc_last', 'incl_last'].includes(this.sandhi) || this.format === 'number')) {
+		if (input.startsWith(Converter.suffixToken) && (input[input.length - 2] === 'h' || ['auto', 'exc_last', 'incl_last'].includes(this.sandhi) || this.format === 'number')) {
 			input = input.slice(0, -1) + '0';
 		}
 		input = Array.from(input.normalize("NFD")).filter(c => !/[\u0300-\u036f]/.test(c)).join('');
@@ -171,13 +172,20 @@ class Converter {
 
 	// Helper to break down a word into syllables for conversion
 	preprocessWord(word) {
-		return word.replace(/--/g, '-' + this.suffixToken).split('-');
+		return word.replace(/--/g, '-' + Converter.suffixToken).split('-');
 	}
 
 
 	// Helper to convert syllable from Tai-lo number tones to diacritic tones
 	getMarkTone(input, placement, tones) {
-		return input;
+		for (let s of placement) {
+			let replaced = s.replace(Converter.tt, '');
+			if (input.includes(replaced)) {
+				input = input.replace(replaced, s.replace(Converter.tt, tones[parseInt(input[input.length - 1])]));
+				break;
+			}
+		}
+		return input.slice(0, -1).normalize("NFC");
 	}
 
 
@@ -238,16 +246,11 @@ class Converter {
 		let tones = ['', '', '́', '̀', '', '̂', '', '̄', '̍', ''];
 		placement = placement.concat(placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
 		convert = { ...convert, ...Object.entries(convert).reduce((acc, [k, v]) => ({ ...acc, [k.charAt(0).toUpperCase() + k.slice(1)]: v.charAt(0).toUpperCase() + v.slice(1) }), {}) };
-		// input = '-'.join(self.__get_mark_tone(self.__replacement_tool(convert, nt), placement, tones) for nt in self.__get_number_tones(input))
-		input = this.getNumberTones(input).map(nt =>
-			this.getMarkTone(
-				this.replacementTool(convert, nt),
-				placement,
-				tones
-			)
-		).join('-');
+		input = this.getNumberTones(input).map(nt => {
+			let replaced = this.replacementTool(convert, nt);
+			return this.getMarkTone(replaced, placement, tones);
+		}).join('-');
 		return input.replace(new RegExp(Converter.suffixToken, 'g'), '--');
-		// return input;
 	}
 
 
