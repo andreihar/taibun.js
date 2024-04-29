@@ -162,7 +162,10 @@ class Converter {
 
 	// Helper to convert word from Tai-lo to number
 	markToNumber(input) {
-		return input;
+		input = input.replace('--', '-' + this.suffixToken);
+		let words = input.split('-');
+		input = words.filter(w => w.length > 0).map(w => this.getNumberTone(w)).join('-');
+		return input.replace(this.suffixToken, '--');
 	}
 
 
