@@ -167,74 +167,74 @@ describe('inclLast', () => {
 // 	});
 // });
 
-// describe('sentence auto', () => {
-// 	const testData = [
-// 		[["Thái-khōng pīng-iú, lin-hó! Lin tsià-pa buē/Thái-khōng pìng-iú, lin-hó! Lin tsià-pa bē"], "Tailo"],
-// 		[["Thái-khōng pēng-iú, lin-hó! Lin chià-pa bōe/Thái-khōng pèng-iú, lin-hó! Lin chià-pa bē"], "POJ"],
-// 		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨˋ, ㄌㄧㄣ ㄏㄜˋ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˫/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨˋ, ㄌㄧㄣ ㄏㄜˋ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˫"], "Zhuyin"],
-// 		[["Thai2 khong7 ping7 iu2, lin1 ho2! Lin1 cia3 pa1 bue7/Thai2 khong7 ping3 iu2, lin1 ho2! Lin1 cia3 pa1 be7"], "TLPA"],
-// 		[["Tǎikông bîngyǔ, līnhǒ! Līn ziàbā bbuê/Tǎikông bìngyǔ, līnhǒ! Līn ziàbā bbê"], "Pingyim"],
-// 		// [["Tài-kōng bīng-iù, lin-hòr! Lin ziâ-ba bhuē/Tài-kōng bîng-iù, lin-hòr! Lin ziâ-ba bhē"], "Tongiong"],
-// 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁵³, lin⁴⁴ hə⁵³! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵¹, lin⁵⁵ ho⁵¹! Lin⁵⁵ tɕia²¹ pa⁵⁵ be³³"], "IPA"]
-// 	];
-// 	testData.forEach(([transl, system]) => {
-// 		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
-// 		test(`testing: ${system}`, () => {
-// 			checker(data, new Converter({ system, punctuation: 'none', sandhi: 'auto' }), new Converter({ system, dialect: "north", punctuation: 'none', sandhi: 'auto' }));
-// 		});
-// 	});
-// });
+describe('sentence auto', () => {
+	const testData = [
+		[["Thái-khōng pīng-iú, lin-hó! Lin tsià-pa buē/Thái-khōng pìng-iú, lin-hó! Lin tsià-pa bē"], "Tailo"],
+		[["Thái-khōng pēng-iú, lin-hó! Lin chià-pa bōe/Thái-khōng pèng-iú, lin-hó! Lin chià-pa bē"], "POJ"],
+		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨˋ, ㄌㄧㄣ ㄏㄜˋ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˫/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨˋ, ㄌㄧㄣ ㄏㄜˋ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˫"], "Zhuyin"],
+		[["Thai2 khong7 ping7 iu2, lin1 ho2! Lin1 cia3 pa1 bue7/Thai2 khong7 ping3 iu2, lin1 ho2! Lin1 cia3 pa1 be7"], "TLPA"],
+		[["Tǎikông bîngyǔ, līnhǒ! Līn ziàbā bbuê/Tǎikông bìngyǔ, līnhǒ! Līn ziàbā bbê"], "Pingyim"],
+		// [["Tài-kōng bīng-iù, lin-hòr! Lin ziâ-ba bhuē/Tài-kōng bîng-iù, lin-hòr! Lin ziâ-ba bhē"], "Tongiong"],
+		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁵³, lin⁴⁴ hə⁵³! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵¹, lin⁵⁵ ho⁵¹! Lin⁵⁵ tɕia²¹ pa⁵⁵ be³³"], "IPA"]
+	];
+	testData.forEach(([transl, system]) => {
+		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		test(`testing: ${system}`, () => {
+			checker(data, new Converter({ system, sandhi: 'auto' }), new Converter({ system, dialect: "north", sandhi: 'auto' }));
+		});
+	});
+});
 
-// describe('sentence none', () => {
-// 	const testData = [
-// 		[["Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē/Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá bē"], "Tailo"],
-// 		[["Thài-khong pêng-iú, lín-hó! Lín chia̍h-pá bōe/Thài-khong pêng-iú, lín-hó! Lín chia̍h-pá bē"], "POJ"],
-// 		[["ㄊㄞ˪ ㄎㆲ ㄅㄧㄥˊ ㄧㄨˋ, ㄌㄧㄣˋ ㄏㄜˋ! ㄌㄧㄣˋ ㄐㄧㄚㆷ˙ ㄅㄚˋ ㆠㄨㆤ˫/ㄊㄞ˪ ㄎㆲ ㄅㄧㄥˊ ㄧㄨˋ, ㄌㄧㄣˋ ㄏㄜˋ! ㄌㄧㄣˋ ㄐㄧㄚㆷ˙ ㄅㄚˋ ㆠㆤ˫"], "Zhuyin"],
-// 		[["Thai3 khong1 ping5 iu2, lin2 ho2! Lin2 ciah8 pa2 bue7/Thai3 khong1 ping5 iu2, lin2 ho2! Lin2 ciah8 pa2 be7"], "TLPA"],
-// 		[["Tàikōng bíngyǔ, lǐnhǒ! Lǐn ziáhbǎ bbuê/Tàikōng bíngyǔ, lǐnhǒ! Lǐn ziáhbǎ bbê"], "Pingyim"],
-// 		// [["Tâi-kong bĭng-iù, lìn-hòr! Lìn ziah-bà bhuē/Tâi-kong bĭng-iù, lìn-hòr! Lìn ziah-bà bhē"], "Tongiong"],
-// 		[["Tʰai¹¹ kʰɔŋ⁴⁴ piɪŋ²⁵ iu⁵³, lin⁵³ hə⁵³! Lin⁵³ tɕiaʔ⁵ pa⁵³ bue²²/Tʰai²¹ kʰɔŋ⁵⁵ piɪŋ²⁴ iu⁵¹, lin⁵¹ ho⁵¹! Lin⁵¹ tɕiaʔ⁴ pa⁵¹ be³³"], "IPA"]
-// 	];
-// 	testData.forEach(([transl, system]) => {
-// 		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
-// 		test(`testing: ${system}`, () => {
-// 			checker(data, new Converter({ system, punctuation: 'none', sandhi: 'none' }), new Converter({ system, dialect: "north", punctuation: 'none', sandhi: 'none' }));
-// 		});
-// 	});
-// });
+describe('sentence none', () => {
+	const testData = [
+		[["Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē/Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá bē"], "Tailo"],
+		[["Thài-khong pêng-iú, lín-hó! Lín chia̍h-pá bōe/Thài-khong pêng-iú, lín-hó! Lín chia̍h-pá bē"], "POJ"],
+		[["ㄊㄞ˪ ㄎㆲ ㄅㄧㄥˊ ㄧㄨˋ, ㄌㄧㄣˋ ㄏㄜˋ! ㄌㄧㄣˋ ㄐㄧㄚㆷ˙ ㄅㄚˋ ㆠㄨㆤ˫/ㄊㄞ˪ ㄎㆲ ㄅㄧㄥˊ ㄧㄨˋ, ㄌㄧㄣˋ ㄏㄜˋ! ㄌㄧㄣˋ ㄐㄧㄚㆷ˙ ㄅㄚˋ ㆠㆤ˫"], "Zhuyin"],
+		[["Thai3 khong1 ping5 iu2, lin2 ho2! Lin2 ciah8 pa2 bue7/Thai3 khong1 ping5 iu2, lin2 ho2! Lin2 ciah8 pa2 be7"], "TLPA"],
+		[["Tàikōng bíngyǔ, lǐnhǒ! Lǐn ziáhbǎ bbuê/Tàikōng bíngyǔ, lǐnhǒ! Lǐn ziáhbǎ bbê"], "Pingyim"],
+		// [["Tâi-kong bĭng-iù, lìn-hòr! Lìn ziah-bà bhuē/Tâi-kong bĭng-iù, lìn-hòr! Lìn ziah-bà bhē"], "Tongiong"],
+		[["Tʰai¹¹ kʰɔŋ⁴⁴ piɪŋ²⁵ iu⁵³, lin⁵³ hə⁵³! Lin⁵³ tɕiaʔ⁵ pa⁵³ bue²²/Tʰai²¹ kʰɔŋ⁵⁵ piɪŋ²⁴ iu⁵¹, lin⁵¹ ho⁵¹! Lin⁵¹ tɕiaʔ⁴ pa⁵¹ be³³"], "IPA"]
+	];
+	testData.forEach(([transl, system]) => {
+		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		test(`testing: ${system}`, () => {
+			checker(data, new Converter({ system, sandhi: 'none' }), new Converter({ system, dialect: "north", sandhi: 'none' }));
+		});
+	});
+});
 
-// describe('sentence excLast', () => {
-// 	const testData = [
-// 		[["Thái-khōng pīng-iu, lin-ho! Lin tsià-pa buē/Thái-khōng pìng-iu, lin-ho! Lin tsià-pa bē"], "Tailo"],
-// 		[["Thái-khōng pēng-iu, lin-ho! Lin chià-pa bōe/Thái-khōng pèng-iu, lin-ho! Lin chià-pa bē"], "POJ"],
-// 		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˫/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˫"], "Zhuyin"],
-// 		[["Thai2 khong7 ping7 iu1, lin1 ho1! Lin1 cia3 pa1 bue7/Thai2 khong7 ping3 iu1, lin1 ho1! Lin1 cia3 pa1 be7"], "TLPA"],
-// 		[["Tǎikông bîngyū, līnhō! Līn ziàbā bbuê/Tǎikông bìngyū, līnhō! Līn ziàbā bbê"], "Pingyim"],
-// 		// [["Tài-kōng bīng-iu, lin-hor! Lin ziâ-ba bhuē/Tài-kōng bîng-iu, lin-hor! Lin ziâ-ba bhē"], "Tongiong"],
-// 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴, lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵, lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ be³³"], "IPA"]
-// 	];
-// 	testData.forEach(([transl, system]) => {
-// 		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
-// 		test(`testing: ${system}`, () => {
-// 			checker(data, new Converter({ system, punctuation: 'none', sandhi: 'excLast' }), new Converter({ system, dialect: "north", punctuation: 'none', sandhi: 'excLast' }));
-// 		});
-// 	});
-// });
+describe('sentence excLast', () => {
+	const testData = [
+		[["Thái-khōng pīng-iu, lin-ho! Lin tsià-pa buē/Thái-khōng pìng-iu, lin-ho! Lin tsià-pa bē"], "Tailo"],
+		[["Thái-khōng pēng-iu, lin-ho! Lin chià-pa bōe/Thái-khōng pèng-iu, lin-ho! Lin chià-pa bē"], "POJ"],
+		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˫/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˫"], "Zhuyin"],
+		[["Thai2 khong7 ping7 iu1, lin1 ho1! Lin1 cia3 pa1 bue7/Thai2 khong7 ping3 iu1, lin1 ho1! Lin1 cia3 pa1 be7"], "TLPA"],
+		[["Tǎikông bîngyū, līnhō! Līn ziàbā bbuê/Tǎikông bìngyū, līnhō! Līn ziàbā bbê"], "Pingyim"],
+		// [["Tài-kōng bīng-iu, lin-hor! Lin ziâ-ba bhuē/Tài-kōng bîng-iu, lin-hor! Lin ziâ-ba bhē"], "Tongiong"],
+		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴, lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵, lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ be³³"], "IPA"]
+	];
+	testData.forEach(([transl, system]) => {
+		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		test(`testing: ${system}`, () => {
+			checker(data, new Converter({ system, sandhi: 'excLast' }), new Converter({ system, dialect: "north", sandhi: 'excLast' }));
+		});
+	});
+});
 
-// describe('sentence inclLast', () => {
-// 	const testData = [
-// 		[["Thái-khōng pīng-iu, lin-ho! Lin tsià-pa buè/Thái-khōng pìng-iu, lin-ho! Lin tsià-pa bè"], "Tailo"],
-// 		[["Thái-khōng pēng-iu, lin-ho! Lin chià-pa bòe/Thái-khōng pèng-iu, lin-ho! Lin chià-pa bè"], "POJ"],
-// 		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˪/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˪"], "Zhuyin"],
-// 		[["Thai2 khong7 ping7 iu1, lin1 ho1! Lin1 cia3 pa1 bue3/Thai2 khong7 ping3 iu1, lin1 ho1! Lin1 cia3 pa1 be3"], "TLPA"],
-// 		[["Tǎikông bîngyū, līnhō! Līn ziàbā bbuè/Tǎikông bìngyū, līnhō! Līn ziàbā bbè"], "Pingyim"],
-// 		// [["Tài-kōng bīng-iu, lin-hor! Lin ziâ-ba bhuê/Tài-kōng bîng-iu, lin-hor! Lin ziâ-ba bhê"], "Tongiong"],
-// 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴, lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue¹¹/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵, lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ be²¹"], "IPA"]
-// 	];
-// 	testData.forEach(([transl, system]) => {
-// 		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
-// 		test(`testing: ${system}`, () => {
-// 			checker(data, new Converter({ system, punctuation: 'none', sandhi: 'inclLast' }), new Converter({ system, dialect: "north", punctuation: 'none', sandhi: 'inclLast' }));
-// 		});
-// 	});
-// });
+describe('sentence inclLast', () => {
+	const testData = [
+		[["Thái-khōng pīng-iu, lin-ho! Lin tsià-pa buè/Thái-khōng pìng-iu, lin-ho! Lin tsià-pa bè"], "Tailo"],
+		[["Thái-khōng pēng-iu, lin-ho! Lin chià-pa bòe/Thái-khōng pèng-iu, lin-ho! Lin chià-pa bè"], "POJ"],
+		[["ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˫ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㄨㆤ˪/ㄊㄞˋ ㄎㆲ˫ ㄅㄧㄥ˪ ㄧㄨ, ㄌㄧㄣ ㄏㄜ! ㄌㄧㄣ ㄐㄧㄚ˪ ㄅㄚ ㆠㆤ˪"], "Zhuyin"],
+		[["Thai2 khong7 ping7 iu1, lin1 ho1! Lin1 cia3 pa1 bue3/Thai2 khong7 ping3 iu1, lin1 ho1! Lin1 cia3 pa1 be3"], "TLPA"],
+		[["Tǎikông bîngyū, līnhō! Līn ziàbā bbuè/Tǎikông bìngyū, līnhō! Līn ziàbā bbè"], "Pingyim"],
+		// [["Tài-kōng bīng-iu, lin-hor! Lin ziâ-ba bhuê/Tài-kōng bîng-iu, lin-hor! Lin ziâ-ba bhê"], "Tongiong"],
+		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴, lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue¹¹/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵, lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ be²¹"], "IPA"]
+	];
+	testData.forEach(([transl, system]) => {
+		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		test(`testing: ${system}`, () => {
+			checker(data, new Converter({ system, sandhi: 'inclLast' }), new Converter({ system, dialect: "north", sandhi: 'inclLast' }));
+		});
+	});
+});

@@ -57,7 +57,10 @@ class Converter {
 	get(input) {
 		let converted = new (require('./index.js').Tokeniser)().tokenise(toTraditional(input));
 		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
-		return converted;
+		if (this.punctuation === 'format') {
+			return this.formatText(this.formatPunctuationWestern(converted[0].toUpperCase() + converted.slice(1)));
+		}
+		return this.formatPunctuationCJK(converted);
 	}
 
 
@@ -435,19 +438,47 @@ class Converter {
 
 	// Helper to convert Chinese punctuation to Latin punctuation with appropriate spacing
 	formatPunctuationWestern(input) {
+		const punctuationMapping = {
+			'。': '.', '．': ' ', '，': ',', '、': ',', '！': '!', '？': '?', '；': ';', '：': ':',
+			'）': ')', '］': ']', '】': ']', '（': '(', '［': '[', '【': '['
+		};
+		const leftSpace = { '.': '.', ',': ',', '!': '!', '?': '?', ';': ';', ':': ':', ')': ')', ']': ']', '」': '"', '”': '"', '--': '--' };
+		const rightSpace = { '(': '(', '[': '[', '「': '"', '“': '"' };
+		for (const [punctCh, punctLat] of Object.entries(punctuationMapping)) {
+			input = input.replace(new RegExp(punctCh, 'g'), punctLat);
+		}
+		for (const [left, space] of Object.entries(leftSpace)) {
+			const escapedLeft = left.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escapes special characters
+			input = input.replace(new RegExp(' ' + escapedLeft, 'g'), space).replace(new RegExp(escapedLeft, 'g'), space);
+		}
+		for (const [right, space] of Object.entries(rightSpace)) {
+			const escapedRight = right.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escapes special characters
+			input = input.replace(new RegExp(escapedRight + ' ', 'g'), space).replace(new RegExp(escapedRight, 'g'), space);
+		}
 		return input;
 	}
 
 
 	// Helper to restore original CJK punctuation with appropriate spacing
 	formatPunctuationCJK(input) {
+		const leftSpace = ['。', '．', '，', '、', '！', '？', '；', '：', '）', '］', '】', '」', '”', '--'];
+		const rightSpace = ['（', '［', '【', '「', '“'];
+		leftSpace.forEach(punct => {
+			input = input.replace(new RegExp(' ' + punct + ' ', 'g'), punct).replace(new RegExp(' ' + punct, 'g'), punct);
+		});
+		rightSpace.forEach(punct => {
+			input = input.replace(new RegExp(' ' + punct + ' ', 'g'), punct).replace(new RegExp(punct + ' ', 'g'), punct);
+		});
 		return input;
 	}
 
 
 	// Helper to capitalise text in according to punctuation
 	formatText(input) {
-		return input;
+		const puncFilter = /([.!?]\s*)/g;
+		let splitWithPunc = input.split(puncFilter);
+		splitWithPunc = splitWithPunc.map(i => i.length > 1 ? i[0].toUpperCase() + i.slice(1) : i);
+		return splitWithPunc.join("");
 	}
 }
 
