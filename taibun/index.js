@@ -156,7 +156,7 @@ class Converter {
 	// Helper to convert between transliteration systems
 	replacementTool(dictionary, input) {
 		let pattern = new RegExp(Object.keys(dictionary).join('|'), 'g');
-		return input.replace(pattern, (match) => dictionary[match]);
+		return input.replace(pattern, (matched) => dictionary[matched]);
 	}
 
 
@@ -383,7 +383,24 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to Tong-iong ping-im
 	tailoToTi(input) {
-		return input;
+		let placement = [
+			'ua' + Converter.tt + 'i', 'ia' + Converter.tt + 'o', 'a' + Converter.tt + 'i', 'a' + Converter.tt + 'o',
+			'oo' + Converter.tt, 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt,
+			'a' + Converter.tt, 'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
+		];
+		// plosives don't change, ptkh 4/8 -> ptkh 4/8
+		let convert = {
+			'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8',
+			'oo': 'o', 'om': 'om', 'ong': 'ong', 'ir': 'i', 'tsh': 'c',
+			'ts': 'z', 'nng': 'nng', 'ng': 'ng', 'g': 'gh', 'kh': 'k', 'k': 'g',
+			'ph': 'p', 'p': 'b', 'b': 'bh', 'th': 't', 't': 'd', 'j': 'r'
+		};
+		const tones = ["̊", "", "̀", "̂", "̄", "̆", "", "̄", "", "́"];
+		placement.push(...placement.map(s => s.toUpperCase()));
+		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		const numberTones = this.getNumberTones(input).map(nt => nt.slice(-2, -1) === 'o' ? nt.slice(0, -2) + 'or' + nt.slice(-1) : nt);
+		input = numberTones.map(nt => this.format !== 'number' ? this.getMarkTone(this.replacementTool(convert, nt), placement, tones) : this.replacementTool(convert, nt)).join('-');
+		return input.replace(Converter.suffixToken, '--');
 	}
 
 
