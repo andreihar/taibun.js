@@ -287,7 +287,10 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to TLPA
 	tailoToTlpa(input) {
-		return input;
+		let convert = { 'tsh': 'ch', 'ts': 'c' };
+		convert = { ...convert, ...Object.entries(convert).reduce((acc, [k, v]) => ({ ...acc, [k.charAt(0).toUpperCase() + k.slice(1)]: v.charAt(0).toUpperCase() + v.slice(1) }), {}) };
+		input = this.getNumberTones(input).map(nt => this.replacementTool(convert, nt)).join('-');
+		return input.replace(Converter.suffixToken, '');
 	}
 
 
