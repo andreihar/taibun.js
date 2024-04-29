@@ -91,7 +91,7 @@ class Converter {
 				word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 			}
 		}
-		return word.replace('--', Converter.suffixToken).replace('-', this.delimiter).replace(Converter.suffixToken, '--');
+		return word.replace(/--/g, Converter.suffixToken).replace(/-/g, this.delimiter).replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
 	}
 
 
@@ -256,7 +256,32 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to 方音符號 (zhuyin)
 	tailoToZhuyin(input) {
-		return input;
+		const convert = {
+			'p4': 'ㆴ4', 'p8': 'ㆴ8', 'k4': 'ㆶ4', 'k8': 'ㆶ8', 't4': 'ㆵ4', 't8': 'ㆵ8', 'h4': 'ㆷ4', 'h8': 'ㆷ8', 'h0': '0',
+			'tshing': 'ㄑㄧㄥ', 'tshinn': 'ㄑㆪ', 'phing': 'ㄆㄧㄥ', 'phinn': 'ㄆㆪ', 'tsing': 'ㄐㄧㄥ', 'tsinn': 'ㄐㆪ',
+			'ainn': 'ㆮ', 'aunn': 'ㆯ', 'giok': 'ㆣㄧㄜㆶ', 'ngai': 'ㄫㄞ', 'ngau': 'ㄫㄠ', 'ngoo': 'ㄫㆦ', 'ping': 'ㄅㄧㄥ',
+			'pinn': 'ㄅㆪ', 'senn': 'ㄙㆥ', 'sing': 'ㄒㄧㄥ', 'sinn': 'ㄒㆪ', 'tshi': 'ㄑㄧ',
+			'ang': 'ㄤ', 'ann': 'ㆩ', 'enn': 'ㆥ', 'ing': 'ㄧㄥ', 'inn': 'ㆪ', 'mai': 'ㄇㄞ', 'mau': 'ㄇㄠ', 'mng': 'ㄇㆭ',
+			'moo': 'ㄇㆦ', 'mua': 'ㄇㄨㄚ', 'mue': 'ㄇㄨㆤ', 'mui': 'ㄇㄨㄧ', 'nga': 'ㄫㄚ', 'nge': 'ㄫㆤ', 'ngi': 'ㄫㄧ',
+			'ong': 'ㆲ', 'onn': 'ㆧ', 'tsh': 'ㄘ', 'tsi': 'ㄐㄧ', 'unn': 'ㆫ',
+			'ai': 'ㄞ', 'am': 'ㆰ', 'an': 'ㄢ', 'au': 'ㄠ', 'ji': 'ㆢㄧ', 'kh': 'ㄎ', 'ma': 'ㄇㄚ', 'me': 'ㄇㆤ', 'mi': 'ㄇㄧ',
+			'ng': 'ㆭ', 'ok': 'ㆦㆶ', 'om': 'ㆱ', 'oo': 'ㆦ', 'ph': 'ㄆ', 'si': 'ㄒㄧ', 'th': 'ㄊ', 'ts': 'ㄗ',
+			'a': 'ㄚ', 'b': 'ㆠ', 'e': 'ㆤ', 'g': 'ㆣ', 'h': 'ㄏ', 'i': 'ㄧ', 'j': 'ㆡ', 'k': 'ㄍ', 'l': 'ㄌ', 'm': 'ㆬ',
+			'n': 'ㄋ', 'o': 'ㄜ', 'p': 'ㄅ', 's': 'ㄙ', 't': 'ㄉ', 'u': 'ㄨ'
+		};
+		const tones = ['', '', 'ˋ', '˪', '', 'ˊ', '', '˫', '˙'];
+		let output = [];
+		for (let nt of this.getNumberTones([input[0].toLowerCase(), input[1]])) {
+			nt = this.replacementTool(convert, nt).replace(Converter.suffixToken, '');
+			if (nt.length > 2 && nt[nt.length - 2] === 'ㄋ') {
+				nt = nt.slice(0, -2) + 'ㄣ' + nt[nt.length - 1];
+			}
+			if (this.format !== 'number') {
+				nt = Array.from(nt).map(t => isNaN(parseInt(t)) ? t : tones[parseInt(t)]).join('');
+			}
+			output.push(nt);
+		}
+		return output.join('-').replace(Converter.suffixToken, '');
 	}
 
 
