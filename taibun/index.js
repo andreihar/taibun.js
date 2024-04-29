@@ -8,7 +8,7 @@ const simplifiedDict = Object.entries(tradDict).reduce((acc, [k, v]) => ({ ...ac
 // Helper to check if the character is a Chinese character
 function isCjk(input) {
 	return [...input].every(char => {
-		const code = char.charCodeAt(0);
+		const code = char.codePointAt(0);
 		return (
 			(0x4E00 <= code && code <= 0x9FFF) ||  // BASIC
 			(0x3400 <= code && code <= 0x4DBF) ||  // Ext A
