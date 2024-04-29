@@ -1,8 +1,8 @@
 const { Converter } = require('taibun');
 const checker = require('./utils');
 
-const c = new Converter("Tailo", 'none');
-const cNorth = new Converter("Tailo", "north", 'none');
+const c = new Converter({ system: "Tailo", punctuation: 'none' });
+const cNorth = new Converter({ system: "Tailo", dialect: "north", punctuation: 'none' });
 
 test('tailoInitials', () => {
 	const bilabial = ["啡,pi", "波,pho", "毛,môo", "猫,bâ"];

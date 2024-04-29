@@ -40,14 +40,14 @@ class Converter {
 	static noSandhi = ['這', '彼', '遮', '遐'];
 	static location = ['頂', '跤', '外', '內'];
 
-	constructor(system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convert_non_cjk = false) {
+	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false } = {}) {
 		this.system = system.toLowerCase();
 		this.dialect = dialect.toLowerCase();
 		this.format = format;
 		this.delimiter = delimiter !== Converter.defaultDelimiter ? delimiter : this.setDefaultDelimiter();
 		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
 		this.punctuation = punctuation;
-		this.convert_non_cjk = convert_non_cjk;
+		this.convertNonCjk = convertNonCjk;
 	}
 
 
@@ -97,7 +97,14 @@ class Converter {
 
 	// Helper switch for converting 漢字 based on defined transliteration system
 	systemConversion(word) {
-		return word[0];
+		if (this.system === 'poj') return this.tailoToPoj(word);
+		if (this.system === 'zhuyin') return this.tailoToZhuyin(word);
+		if (this.system === 'tlpa') return this.tailoToTlpa(word);
+		if (this.system === 'pingyim') return this.tailoToPingyim(word);
+		if (this.system === 'tongiong') return this.tailoToTi(word);
+		if (this.system === 'ipa') return this.tailoToIpa(word);
+		if (['auto', 'exc_last', 'incl_last'].includes(this.sandhi)) return this.tailoToTailo(word);
+		else return word[0];
 	}
 
 
