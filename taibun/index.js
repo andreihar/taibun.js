@@ -354,7 +354,48 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to International Phonetic Alphabet
 	tailoToIpa(input) {
-		return input;
+		let convert = {
+			'tsing': 'tɕiɪŋ', 'jiang': 'dʑiaŋ', 'tshing': 'tɕʰiɪŋ', 'tsik': 'tɕiɪk', 'tshik': 'tɕʰiɪk',
+			'jian': 'dʑiɛn', 'jiat': 'dʑiɛt', 'tshi': 'tɕʰi',
+			'iann': 'iã', 'ainn': 'ãi', 'iang': 'iaŋ', 'nng': 'nŋ',
+			'mia': 'miã', 'mui': 'muĩ', 'mue': 'muẽ', 'mua': 'muã', 'ma': 'mã', 'me': 'mẽ', 'mi': 'mĩ', 'moo': 'mɔ̃', // m nasalisation
+			'nia': 'niã', 'nua': 'nuã', 'na': 'nã', 'ne': 'nẽ', 'ni': 'nĩ', 'noo': 'nɔ̃', // n nasalisation
+			'ngia': 'ŋiã', 'ngiu': 'ŋiũ', 'nga': 'ŋã', 'nge': 'ŋẽ', 'ngi': 'ŋĩ', 'ngoo': 'ŋɔ̃', // ng nasalisation
+			'ing': 'iɪŋ', 'tsh': 'tsʰ', 'tsi': 'tɕi', 'ian': 'iɛn', 'iat': 'iɛt', 'onn': 'ɔ̃',
+			'ong': 'ɔŋ', 'ik': 'iɪk', 'ji': 'dʑi', 'kh': 'kʰ', 'ng': 'ŋ', 'oo': 'ɔ', 'nn': '̃',
+			'hm': 'hm̩', 'ph': 'pʰ', 'th': 'tʰ', 'ok': 'ɔk', 'om': 'ɔm', 'j': 'dz', 'o': 'ə'
+		};
+		if (this.dialect === 'north') {
+			convert['o'] = 'o';
+		}
+		let convert2 = {
+			'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': 'ʔ0'
+		};
+		let tones = this.dialect !== 'north' ? ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵'] : ['', '⁵⁵', '⁵¹', '²¹', '³²', '²⁴', '', '³³', '⁴'];
+		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		Object.keys(convert2).forEach(k => convert2[k.charAt(0).toUpperCase() + k.slice(1)] = convert2[k].charAt(0).toUpperCase() + convert2[k].slice(1));
+		let output = [];
+		for (let nt of this.getNumberTones(input)) {
+			nt = this.replacementTool(convert, nt).replace(Converter.suffixToken, '');
+			if (nt.includes('ŋ')) {
+				if (nt.length > 2) {
+					if (nt.slice(0, nt.indexOf('ŋ')).toLowerCase().split('').every(c => !'aeioɔu'.includes(c)) && nt.indexOf('ŋ') !== 0) {
+						nt = nt.replace('ŋ', 'ŋ̍');
+					}
+				} else if (nt.length === 2) {
+					nt = nt.replace('ŋ', 'ŋ̍');
+				}
+			}
+			if (nt.length === 2 && nt[0] === 'm') {
+				nt = 'm̩' + nt.slice(-1);
+			}
+			nt = this.replacementTool(convert2, nt);
+			if (this.format !== 'number') {
+				nt = nt.split('').map(t => t.match(/\d/) ? tones[parseInt(t)] : t).join('');
+			}
+			output.push(nt.normalize('NFC'));
+		}
+		return output.join('-').replace(Converter.suffixToken, '');
 	}
 
 
