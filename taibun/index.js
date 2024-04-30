@@ -38,9 +38,9 @@ Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tong
 		   dialect = `south` (Zhangzhou-leaning, default), `north` (Quanzhou-leaning)
 		   format = `mark` (diacritical), `number` (numeric), `strip` (no tones)
 		   delimiter = String that replaces the default delimiter
-		   sandhi = `auto`, `none`, `exc_last`, `incl_last`
+		   sandhi = `auto`, `none`, `excLast`, `inclLast`
 		   punctuation = `format` (Latin-style, default), `none` (preserve original)
-		   convert_non_cjk = True, False (default)
+		   convert_non_cjk = true, false (default)
 */
 class Converter {
 	static suffixToken = '[ЅFFX_ТКŊ]';
@@ -230,7 +230,10 @@ class Converter {
 		if (this.dialect === 'north') {
 			sandhi['5'] = '3';
 		}
-		const indices = last === 'a suff' && words.length > 1 ? [...Array(words.length - 2).keys()] : (!last ? [...Array(words.length - 1).keys()] : [...Array(words.length).keys()]);
+		const indices = last === 'a suff' && words.length > 1
+			? [...Array(words.length - 2).keys()]
+			: (!last ? [...Array(words.length - 1).keys()]
+				: [...Array(words.length).keys()]);
 		const sandhiWords = indices.map(i => this.replacementTool(sandhi, words[i]));
 		if (last === 'a suff' && words.length > 1) {
 			sandhiWords.push(this.replacementTool(aSandhi, words[words.length - 2]));
