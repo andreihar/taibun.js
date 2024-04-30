@@ -40,7 +40,7 @@ Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tong
 		   delimiter = String that replaces the default delimiter
 		   sandhi = `auto`, `none`, `excLast`, `inclLast`
 		   punctuation = `format` (Latin-style, default), `none` (preserve original)
-		   convert_non_cjk = true, false (default)
+		   convertNonCjk = true, false (default)
 */
 class Converter {
 	static suffixToken = '[ЅFFX_ТКŊ]';
