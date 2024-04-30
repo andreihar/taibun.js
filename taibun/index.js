@@ -31,6 +31,17 @@ function toSimplified(input) {
 }
 
 
+/*
+Description: Converts Chinese characters to Taiwanese Hokkien phonetic transcriptions.
+			 Supports both Traditional and Simplified characters.
+Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tongiong`, `IPA`
+		   dialect = `south` (Zhangzhou-leaning, default), `north` (Quanzhou-leaning)
+		   format = `mark` (diacritical), `number` (numeric), `strip` (no tones)
+		   delimiter = String that replaces the default delimiter
+		   sandhi = `auto`, `none`, `exc_last`, `incl_last`
+		   punctuation = `format` (Latin-style, default), `none` (preserve original)
+		   convert_non_cjk = True, False (default)
+*/
 class Converter {
 	static suffixToken = '[ЅFFX_ТКŊ]';
 	static tt = '[ТŊ_ТКŊ]';
@@ -143,11 +154,17 @@ class Converter {
 			numberTones = numberTones.map(s => replaceWithZero || (replaceWithZero = s[s.length - 1] === '0') ? s.slice(0, -1) + '0' : s);
 		}
 		if (this.sandhi === 'auto' || this.sandhi === 'excLast' || this.sandhi === 'inclLast') {
-			let index = numberTones.findIndex(s => s.startsWith(this.suffixToken));
+			let index = numberTones.findIndex(s => s.startsWith(Converter.suffixToken));
 			if (index === -1) {
 				index = numberTones.length;
 			}
-			numberTones = index !== numberTones.length && numberTones.length > 1 ? this.toneSandhi(numberTones.slice(0, index), false).concat(numberTones.slice(index)) : this.toneSandhi(numberTones, input[1]);
+			if (index !== numberTones.length && numberTones.length > 1) {
+				const word = this.toneSandhi(numberTones.slice(0, index), false);
+				const number = numberTones.slice(index);
+				numberTones = word.concat(number);
+			} else {
+				numberTones = this.toneSandhi(numberTones, input[1]);
+			}
 		}
 		return numberTones;
 	}
@@ -155,17 +172,17 @@ class Converter {
 
 	// Helper to convert between transliteration systems
 	replacementTool(dictionary, input) {
-		let pattern = new RegExp(Object.keys(dictionary).join('|'), 'g');
+		const pattern = new RegExp(Object.keys(dictionary).join('|'), 'g');
 		return input.replace(pattern, (matched) => dictionary[matched]);
 	}
 
 
 	// Helper to convert word from Tai-lo to number
 	markToNumber(input) {
-		input = input.replace('--', '-' + this.suffixToken);
-		let words = input.split('-');
+		input = input.replace('--', '-' + Converter.suffixToken);
+		const words = input.split('-');
 		input = words.filter(w => w.length > 0).map(w => this.getNumberTone(w)).join('-');
-		return input.replace(this.suffixToken, '--');
+		return input.replace(Converter.suffixToken, '--');
 	}
 
 
@@ -195,8 +212,8 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo number tones to diacritic tones
 	getMarkTone(input, placement, tones) {
-		for (let s of placement) {
-			let replaced = s.replace(Converter.tt, '');
+		for (const s of placement) {
+			const replaced = s.replace(Converter.tt, '');
 			if (input.includes(replaced)) {
 				input = input.replace(replaced, s.replace(Converter.tt, tones[parseInt(input[input.length - 1])]));
 				break;
@@ -214,7 +231,7 @@ class Converter {
 			sandhi['5'] = '3';
 		}
 		const indices = last === 'a suff' && words.length > 1 ? [...Array(words.length - 2).keys()] : (!last ? [...Array(words.length - 1).keys()] : [...Array(words.length).keys()]);
-		let sandhiWords = indices.map(i => this.replacementTool(sandhi, words[i]));
+		const sandhiWords = indices.map(i => this.replacementTool(sandhi, words[i]));
 		if (last === 'a suff' && words.length > 1) {
 			sandhiWords.push(this.replacementTool(aSandhi, words[words.length - 2]));
 		}
@@ -231,20 +248,17 @@ class Converter {
 			'excLast': input.map((char, i) => [char, i !== input.length - 1]),
 			'inclLast': input.map(char => [char, true]),
 		};
-		let resultList = [];
-		for (let i = 0; i < input.length; i++) {
-			let result;
+		let resultList = input.map((item, i) => {
 			if (i < input.length - 1 && Converter.location.includes(input[i + 1])) {
-				result = false;
-			} else if (Converter.location.includes(input[i]) || Converter.noSandhi.includes(input[i])) {
-				result = false;
-			} else if (input[i].length > 1 && input[i].endsWith("仔")) {
-				result = "a suff";
+				return [item, false];
+			} else if (Converter.location.includes(item) || Converter.noSandhi.includes(item)) {
+				return [item, false];
+			} else if (item.length > 1 && item.endsWith("仔")) {
+				return [item, "a suff"];
 			} else {
-				result = i < input.length - 1 && isCjk(input[i + 1]);
+				return [item, i < input.length - 1 && isCjk(input[i + 1])];
 			}
-			resultList.push([input[i], result]);
-		}
+		});
 		resultList = sandhiLogic[this.sandhi] || resultList;
 		for (let i = resultList.length - 2; i >= 0; i--) {
 			if (Converter.suffixes.includes(resultList[i + 1][0])) {
@@ -274,18 +288,18 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to POJ
 	tailoToPoj(input) {
-		let placement = [
+		const placement = [
 			'oa' + Converter.tt + 'h', 'oa' + Converter.tt + 'n', 'oa' + Converter.tt + 'ng', 'oa' + Converter.tt + 'ⁿ', 'oa' + Converter.tt + 't',
 			'ia' + Converter.tt + 'u', 'oe' + Converter.tt + 'h', 'o' + Converter.tt + 'e', 'oa' + Converter.tt + 'i', 'u' + Converter.tt + 'i', 'o' + Converter.tt + 'a',
 			'a' + Converter.tt + 'i', 'a' + Converter.tt + 'u', 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'a' + Converter.tt,
 			'o' + Converter.tt, 'o͘' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
 		];
-		let convert = { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' };
+		const convert = { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' };
 		const tones = ['', '', '́', '̀', '', '̂', '', '̄', '̍', ''];
-		placement = placement.concat(placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		input = this.getNumberTones(input).map(nt => {
-			let replaced = this.replacementTool(convert, nt);
+			const replaced = this.replacementTool(convert, nt);
 			return this.getMarkTone(replaced, placement, tones);
 		}).join('-');
 		return input.replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
@@ -325,8 +339,8 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to TLPA
 	tailoToTlpa(input) {
-		let convert = { 'tsh': 'ch', 'ts': 'c' };
-		convert = { ...convert, ...Object.entries(convert).reduce((acc, [k, v]) => ({ ...acc, [k.charAt(0).toUpperCase() + k.slice(1)]: v.charAt(0).toUpperCase() + v.slice(1) }), {}) };
+		const convert = { 'tsh': 'ch', 'ts': 'c' };
+		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		input = this.getNumberTones(input).map(nt => this.replacementTool(convert, nt)).join('-');
 		return input.replace(Converter.suffixToken, '');
 	}
@@ -334,12 +348,12 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to Bbanlam pingyim
 	tailoToPingyim(input) {
-		let placement = [
+		const placement = [
 			'ua' + Converter.tt + 'i', 'ia' + Converter.tt + 'o', 'a' + Converter.tt + 'i', 'a' + Converter.tt + 'o',
 			'oo' + Converter.tt, 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt,
 			'a' + Converter.tt, 'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt, 'n' + Converter.tt
 		];
-		let convert = {
+		const convert = {
 			'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8',
 			'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne',
 			'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c',
@@ -347,38 +361,37 @@ class Converter {
 			't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn'
 		};
 		const tones = ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', ''];
-		placement = placement.concat(placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		let output = [];
 		for (let nt of this.getNumberTones(input)) {
 			let replaced = this.replacementTool(convert, nt);
-			if (['i', 'I'].includes(replaced[0])) {
-				replaced = (replaced[0] == 'I' ? 'Y' : 'y') + (['a', 'u', 'o'].includes(replaced[1]) ? replaced.slice(1) : replaced.toLowerCase());
+			const firstChar = replaced[0];
+			const secondChar = replaced[1];
+			if (firstChar.toLowerCase() === 'i') {
+				replaced = (firstChar === 'I' ? 'Y' : 'y') + (['a', 'u', 'o'].includes(secondChar) ? replaced.slice(1) : replaced.toLowerCase());
 			}
-			if (['u', 'U'].includes(replaced[0])) {
-				replaced = (replaced[0] == 'U' ? 'W' : 'w') + (nt.length > 2 && ['a', 'i', 'e', 'o'].includes(replaced[1]) ? replaced.slice(1) : replaced.toLowerCase());
+			if (firstChar.toLowerCase() === 'u') {
+				replaced = (firstChar === 'U' ? 'W' : 'w') + (nt.length > 2 && ['a', 'i', 'e', 'o'].includes(secondChar) ? replaced.slice(1) : replaced.toLowerCase());
 			}
-			if (['m', 'M'].includes(nt[0])) {
-				if (nt.length == 2) {
+			if (nt[0].toLowerCase() === 'm') {
+				if (nt.length === 2) {
 					replaced = nt[0] + nt[nt.length - 1];
-				} else if (nt[1] == 'n') {
+				} else if (nt[1] === 'n') {
 					replaced = nt[0] + replaced.slice(3);
 				}
 			}
-			if (nt.slice(-3, -1) == 'ng' || nt.slice(-3, -1) == 'Ng') {
-				replaced = replaced.slice(0, -4) + nt.slice(-3, -1) + nt[nt.length - 1];
+			const lastThreeChars = nt.slice(-3, -1);
+			if (lastThreeChars.toLowerCase() === 'ng') {
+				replaced = replaced.slice(0, -4) + lastThreeChars + nt[nt.length - 1];
 			}
-			if (replaced.slice(-4, -1) == 'bbn') {
+			if (replaced.slice(-4, -1) === 'bbn') {
 				replaced = replaced.replace('bbn', 'm', 1);
 			}
-			if (replaced.slice(-3, -1) == 'ln') {
+			if (replaced.slice(-3, -1) === 'ln') {
 				replaced = replaced.slice(0, -3) + 'n' + replaced[replaced.length - 1];
 			}
-			if (this.format != 'number') {
-				output.push(this.getMarkTone(replaced, placement, tones));
-			} else {
-				output.push(replaced);
-			}
+			output.push(this.format !== 'number' ? this.getMarkTone(replaced, placement, tones) : replaced);
 		}
 		return output.join('-').replace(Converter.suffixToken, '');
 	}
@@ -399,10 +412,16 @@ class Converter {
 			'ph': 'p', 'p': 'b', 'b': 'bh', 'th': 't', 't': 'd', 'j': 'r'
 		};
 		const tones = ["̊", "", "̀", "̂", "̄", "̆", "", "̄", "", "́"];
-		placement.push(...placement.map(s => s.toUpperCase()));
-		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
+		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		const numberTones = this.getNumberTones(input).map(nt => nt.slice(-2, -1) === 'o' ? nt.slice(0, -2) + 'or' + nt.slice(-1) : nt);
-		input = numberTones.map(nt => this.format !== 'number' ? this.getMarkTone(this.replacementTool(convert, nt), placement, tones) : this.replacementTool(convert, nt)).join('-');
+		input = numberTones.map(nt => {
+			if (this.format !== 'number') {
+				return this.getMarkTone(this.replacementTool(convert, nt), placement, tones);
+			} else {
+				return this.replacementTool(convert, nt);
+			}
+		}).join('-');
 		return input.replace(Converter.suffixToken, '--');
 	}
 
@@ -423,32 +442,29 @@ class Converter {
 		if (this.dialect === 'north') {
 			convert['o'] = 'o';
 		}
-		let convert2 = {
-			'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': 'ʔ0'
-		};
+		let convert2 = { 'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': 'ʔ0' };
 		let tones = this.dialect !== 'north' ? ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵'] : ['', '⁵⁵', '⁵¹', '²¹', '³²', '²⁴', '', '³³', '⁴'];
-		Object.keys(convert).forEach(k => convert[k.charAt(0).toUpperCase() + k.slice(1)] = convert[k].charAt(0).toUpperCase() + convert[k].slice(1));
-		Object.keys(convert2).forEach(k => convert2[k.charAt(0).toUpperCase() + k.slice(1)] = convert2[k].charAt(0).toUpperCase() + convert2[k].slice(1));
+		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
+		Object.keys(convert2).forEach(s => convert2[s.charAt(0).toUpperCase() + s.slice(1)] = convert2[s].charAt(0).toUpperCase() + convert2[s].slice(1));
 		let output = [];
-		for (let nt of this.getNumberTones(input)) {
-			nt = this.replacementTool(convert, nt).replace(Converter.suffixToken, '');
-			if (nt.includes('ŋ')) {
-				if (nt.length > 2) {
-					if (nt.slice(0, nt.indexOf('ŋ')).toLowerCase().split('').every(c => !'aeioɔu'.includes(c)) && nt.indexOf('ŋ') !== 0) {
-						nt = nt.replace('ŋ', 'ŋ̍');
-					}
-				} else if (nt.length === 2) {
-					nt = nt.replace('ŋ', 'ŋ̍');
+		for (let numberTone of this.getNumberTones(input)) {
+			numberTone = this.replacementTool(convert, numberTone).replace(Converter.suffixToken, '');
+			if (numberTone.includes('ŋ')) {
+				const indexOfNasal = numberTone.indexOf('ŋ');
+				const precedingChars = numberTone.slice(0, indexOfNasal).toLowerCase().split('');
+				const noVowelsBeforeNasal = precedingChars.every(char => !'aeioɔu'.includes(char));
+				if ((numberTone.length > 2 && noVowelsBeforeNasal && indexOfNasal !== 0) || numberTone.length === 2) {
+					numberTone = numberTone.replace('ŋ', 'ŋ̍');
 				}
 			}
-			if (nt.length === 2 && nt[0] === 'm') {
-				nt = 'm̩' + nt.slice(-1);
+			if (numberTone.length === 2 && numberTone[0] === 'm') {
+				numberTone = 'm̩' + numberTone.slice(-1);
 			}
-			nt = this.replacementTool(convert2, nt);
+			numberTone = this.replacementTool(convert2, numberTone);
 			if (this.format !== 'number') {
-				nt = nt.split('').map(t => t.match(/\d/) ? tones[parseInt(t)] : t).join('');
+				numberTone = numberTone.split('').map(char => char.match(/\d/) ? tones[parseInt(char)] : char).join('');
 			}
-			output.push(nt.normalize('NFC'));
+			output.push(numberTone.normalize('NFC'));
 		}
 		return output.join('-').replace(Converter.suffixToken, '');
 	}
@@ -468,11 +484,11 @@ class Converter {
 			input = input.replace(new RegExp(punctCh, 'g'), punctLat);
 		}
 		for (const [left, space] of Object.entries(leftSpace)) {
-			const escapedLeft = left.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escapes special characters
+			const escapedLeft = left.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 			input = input.replace(new RegExp(' ' + escapedLeft, 'g'), space).replace(new RegExp(escapedLeft, 'g'), space);
 		}
 		for (const [right, space] of Object.entries(rightSpace)) {
-			const escapedRight = right.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // escapes special characters
+			const escapedRight = right.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 			input = input.replace(new RegExp(escapedRight + ' ', 'g'), space).replace(new RegExp(escapedRight, 'g'), space);
 		}
 		return input;
@@ -532,9 +548,21 @@ class Tokeniser {
 		}
 		const punctuations = /([.,!?\"#$%&()*+/:;<=>@[\\\]^`{|}~\t。．，、！？；：（）［］【】「」“”])/;
 		const indices = [0].concat(tokenised.map(item => item.length));
-		tokenised = indices.slice(0, -1).map((_, i) => input.substring(indices.slice(0, i + 1).reduce((a, b) => a + b, 0), indices.slice(0, i + 1).reduce((a, b) => a + b, 0) + indices[i + 1]));
-		tokenised = tokenised.flatMap(word => word.split(punctuations).flatMap(subword => subword ? subword.split(" ").filter(Boolean) : []));
-		return tokenised.flatMap(word => (word.endsWith('的') || word.endsWith('矣')) && word.length > 1 ? [word.slice(0, -1), word.slice(-1)] : [word]);
+		tokenised = indices.slice(0, -1).map((_, i) => {
+			const start = indices.slice(0, i + 1).reduce((a, b) => a + b, 0);
+			const end = start + indices[i + 1];
+			return input.substring(start, end);
+		});
+		tokenised = tokenised.flatMap(word => {
+			const splitByPunctuation = word.split(punctuations);
+			const splitBySpaces = splitByPunctuation.flatMap(subword => subword.split(" "));
+			return splitBySpaces.flatMap(word => {
+				if (!word) return [];
+				const endsWithSpecialChar = (word.endsWith('的') || word.endsWith('矣')) && word.length > 1;
+				return endsWithSpecialChar ? [word.slice(0, -1), word.slice(-1)] : [word];
+			});
+		});
+		return tokenised;
 	}
 }
 
