@@ -14,8 +14,8 @@
 
 
 <!-- PROJECT SHIELDS -->
+[![Contributions][contributions-badge]][contributions]
 [![Tests][tests-badge]][tests]
-[![Contributors][contributors-badge]][contributors]
 [![Release][release-badge]][release]
 [![Licence][licence-badge]][licence]
 [![LinkedIn][linkedin-badge]][linkedin]
@@ -26,7 +26,7 @@ It has methods that allow to customise transliteration and retrieve any necessar
 Includes word tokeniser for Taiwanese Hokkien.
 
 [Report Bug][bug] •
-[PyPI][pypi]
+[npm][npm]
 
 </div>
 
@@ -40,6 +40,7 @@ Includes word tokeniser for Taiwanese Hokkien.
 <details open>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#versions">Versions</a></li>
     <li><a href="#install">Install</a></li>
     <li>
       <a href="#usage">Usage</a>
@@ -62,19 +63,27 @@ Includes word tokeniser for Taiwanese Hokkien.
     </li>
     <li><a href="#example">Example</a></li>
     <li><a href="#data">Data</a></li>
+    <li><a href="#acknowledgements">Acknowledgements</a></li>
     <li><a href="#licence">Licence</a></li>
   </ol>
 </details>
 
 
 
+<!-- OTHER VERSIONS -->
+## Versions
+
+[![Python Version][py-badge]][py-link]
+
+
+
 <!-- INSTALL -->
 ## Install
 
-Taibun can be installed from [pypi][pypi]
+Taibun can be installed from [npm][npm]
 
 ```bash
-$ pip install taibun
+$ npm install taibun --save
 ```
 
 
@@ -86,12 +95,12 @@ $ pip install taibun
 
 `Converter` class transliterates the Chinese characters to the chosen transliteration system with parameters specified by the developer. Works for both Traditional and Simplified characters.
 
-```python
-# constructor
-c = Converter(system, dialect, format, delimiter, sandhi, punctuation, convert_non_cjk)
+```js
+// Constructor
+c = new Converter({ system, dialect, format, delimiter, sandhi, punctuation, convertNonCjk });
 
-# transliterate Chinese characters
-c.get(input)
+// Transliterate Chinese characters
+c.get(input);
 ```
 
 #### System
@@ -149,23 +158,23 @@ Default value depends on the chosen `system`:
 
 #### Sandhi
 
-`sandhi` String - applies the [sandhi rules of Taiwanese Hokkien][sandhi-wiki] to syllables of a single word.
+`sandhi` String - applies the [sandhi rules of Taiwanese Hokkien][sandhi-wiki].
 
 Since it's difficult to encode all sandhi rules, Taibun provides multiple modes for sandhi conversion to allow for customised sandhi handling.
 
 * `none` - doesn't perform any tone sandhi
 * `auto` - closest approximation to full correct tone sandhi of Taiwanese, with proper sandhi of pronouns, suffixes, and words with 仔
-* `exc_last` - changes tone for every syllable except for the last one
-* `incl_last` - changes tone for every syllable including the last one
+* `excLast` - changes tone for every syllable except for the last one
+* `inclLast` - changes tone for every syllable including the last one
 
 Default value depends on the chosen `system`:
 
 * `auto` - for `Tongiong`
 * `none` - for `Tailo`, `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `IPA`
 
-| text         | none                 | auto                 | exc_last             | incl_last            |
-| ------------ | -------------------- | -------------------- | -------------------- | -------------------- |
-| 這是台灣囡仔 | Tse sī Tâi-uân gín-á | Tse sì Tāi-uān gin-á | Tsē sì Tāi-uān gin-á | Tsē sì Tāi-uān gin-a |
+| text             | none                      | auto                       | excLast                   | inclLast                  |
+| ---------------- | ------------------------- | -------------------------- | ------------------------- | ------------------------- |
+| 這是你的手機仔無 | Tse sī lí ê tshiú-ki-á bô | Tse sì li ē tshiu-kī-á bô? | Tsē sì li ē tshiu-kī-a bô | Tsē sì li ē tshiu-kī-a bō |
 
 Sandhi rules also change depending on the dialect chosen.
 
@@ -186,12 +195,12 @@ Sandhi rules also change depending on the dialect chosen.
 
 #### Convert non-CJK
 
-`convert_non_cjk` Boolean - defines whether or not to convert non-Chinese words. Can be used to convert Tailo to another romanisation system.
+`convertNonCjk` Boolean - defines whether or not to convert non-Chinese words. Can be used to convert Tailo to another romanisation system.
 
-* `True` - convert non-Chinese character words
-* `False` (default) - convert only Chinese character words
+* `true` - convert non-Chinese character words
+* `false` (default) - convert only Chinese character words
 
-| text      | False                   | True                    |
+| text      | false                   | true                    |
 | --------- | ----------------------- | ----------------------- |
 | 我食pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ |
 
@@ -199,25 +208,27 @@ Sandhi rules also change depending on the dialect chosen.
 
 `Tokeniser` class performs [NLTK wordpunct_tokenize][nltk-tokenize]-like tokenisation of a Taiwanese Hokkien sentence.
 
-```python
-# constructor
-t = Tokeniser()
+```js
+// Constructor
+t = new Tokeniser();
 
-# tokenise Taiwanese Hokkien sentence
-t.tokenise(input)
+// Tokenise Taiwanese Hokkien sentence
+t.tokenise(input);
 ```
 
 ### Other Functions
 
-```python
-# Convert to Traditional
-to_traditional(input)
+Handy functions for NLP tasks in Taiwanese Hokkien.
 
-# Convert to Simplified
-to_simplified(input)
+```js
+// Convert to Traditional
+toTraditional(input);
 
-# Check if the string is fully composed of Chinese characters
-is_cjk(input)
+// Convert to Simplified
+toSimplified(input);
+
+// Check if the string is fully composed of Chinese characters
+isCjk(input);
 ```
 
 
@@ -225,108 +236,108 @@ is_cjk(input)
 <!-- EXAMPLE -->
 ## Example
 
-```python
-# Converter
-from taibun import Converter
+```js
+// Converter
+const { Converter } = require('taibun');
 
-## System
-c = Converter() # Tailo system default
-c.get('先生講，學生恬恬聽。')
+//// System
+c = new Converter(); // Tailo system default
+c.get('先生講，學生恬恬聽。');
 >> Sian-sinn kóng, ha̍k-sing tiām-tiām thiann.
 
-c = Converter(system='Zhuyin')
-c.get('先生講，學生恬恬聽。')
+c = new Converter({ system: 'Zhuyin' });
+c.get('先生講，學生恬恬聽。');
 >> ㄒㄧㄢ ㄒㆪ ㄍㆲˋ, ㄏㄚㆶ˙ ㄒㄧㄥ ㄉㄧㆰ˫ ㄉㄧㆰ˫ ㄊㄧㆩ.
 
-## Dialect
-c = Converter() # south dialect default
-c.get("我欲用箸食魚")
+//// Dialect
+c = new Converter(); // south dialect default
+c.get("我欲用箸食魚");
 >> Guá beh īng tī tsia̍h hî
 
-c = Converter(dialect='north')
-c.get("我欲用箸食魚")
+c = new Converter({ dialect: 'north' });
+c.get("我欲用箸食魚");
 >> Guá bueh īng tū tsia̍h hû
 
-## Format
-c = Converter() # for Tailo, mark by default
-c.get("生日快樂")
+//// Format
+c = new Converter(); // for Tailo, mark by default
+c.get("生日快樂");
 >> Senn-ji̍t khuài-lo̍k
 
-c = Converter(format='number')
-c.get("生日快樂")
+c = new Converter({ format: 'number' });
+c.get("生日快樂");
 >> Senn1-jit8 khuai3-lok8
 
-c = Converter(format='strip')
-c.get("生日快樂")
+c = new Converter({ format: 'strip' });
+c.get("生日快樂");
 >> Senn-jit khuai-lok
 
-## Delimiter
-c = Converter(delimiter='')
-c.get("先生講，學生恬恬聽。")
+//// Delimiter
+c = new Converter({ delimiter: '' });
+c.get("先生講，學生恬恬聽。");
 >> Siansinn kóng, ha̍ksing tiāmtiām thiann.
 
-c = Converter(system='Pingyim', delimiter='-')
-c.get("先生講，學生恬恬聽。")
+c = new Converter({ system: 'Pingyim', delimiter: '-' });
+c.get("先生講，學生恬恬聽。");
 >> Siān-snī gǒng, hág-sīng diâm-diâm tinā.
 
-## Sandhi
-c = Converter() # for Tailo, sandhi none by default
-c.get("這是台灣囡仔")
+//// Sandhi
+c = new Converter(); // for Tailo, sandhi none by default
+c.get("這是台灣囡仔");
 >> Tse sī Tâi-uân gín-á
 
-c = Converter(sandhi='auto')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'auto' });
+c.get("這是台灣囡仔");
 >> Tse sì Tāi-uān gin-á
 
-c = Converter(sandhi='exc_last')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'excLast' });
+c.get("這是台灣囡仔");
 >> Tsē sì Tāi-uān gin-á
 
-c = Converter(sandhi='incl_last')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'inclLast' });
+c.get("這是台灣囡仔");
 >> Tsē sì Tāi-uān gin-a
 
-## Punctuation
-c = Converter() # format punctuation default
-c.get("太空朋友，恁好！恁食飽未？")
+//// Punctuation
+c = new Converter(); // format punctuation default
+c.get("太空朋友，恁好！恁食飽未？");
 >> Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē?
 
-c = Converter(punctuation='none')
-c.get("太空朋友，恁好！恁食飽未？")
+c = new Converter({ punctuation: 'none' });
+c.get("太空朋友，恁好！恁食飽未？");
 >> thài-khong pîng-iú，lín-hó！lín tsia̍h-pá buē？
 
-## Convert non-CJK
-c = Convert(system='Zhuyin') # False convert_non_cjk default
-c.get("我食pháng")
+//// Convert non-CJK
+c = new Convert({ system: 'Zhuyin' }); // false convertNonCjk default
+c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng
 
-c = Convert(system='Zhuyin', convert_non_cjk=True)
-c.get("我食pháng")
+c = new Convert({ system: 'Zhuyin', convertNonCjk: true });
+c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
 
 
-# Tokeniser
-from taibun import Tokeniser
+// Tokeniser
+const { Tokeniser } = require('taibun');
 
-t = Tokeniser()
-t.tokenise("太空朋友，恁好！恁食飽未？")
+t = new Tokeniser();
+t.tokenise("太空朋友，恁好！恁食飽未？");
 >> ['太空', '朋友', '，', '恁好', '！', '恁', '食飽', '未', '？']
 
 
-# Other Functions
-from taibun import to_traditional, to_simplified, is_cjk
+// Other Functions
+const { toTraditional, toSimplified, isCjk } = require('taibun');
 
-to_traditional("我听无台湾话")
+toTraditional("我听无台湾话");
 >> 我聽無台灣話
 
-to_simplified("我聽無臺灣話")
+toSimplified("我聽無臺灣話");
 >> 我听无台湾话
 
-is_cjk('我食麭')
->> True
+isCjk('我食麭');
+>> true
 
-is_cjk('我食pháng')
->> False
+isCjk('我食pháng');
+>> false
 ```
 
 
@@ -356,18 +367,20 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 
 
 <!-- MARKDOWN LINKS -->
+[contributions]: https://github.com/andreihar/taibun.js/issues
+[contributions-badge]: https://img.shields.io/badge/Contributions-Welcomed-be132d?style=for-the-badge&logo=github
 [tests]: https://github.com/andreihar/taibun.js/actions
-[tests-badge]: https://img.shields.io/github/actions/workflow/status/andreihar/taibun.js/ci.yaml?style=for-the-badge&logo=github
-[contributors-badge]: https://img.shields.io/github/contributors/andreihar/taibun.js?style=for-the-badge
-[contributors]: #usage
+[tests-badge]: https://img.shields.io/github/actions/workflow/status/andreihar/taibun.js/ci.yaml?style=for-the-badge&logo=github-actions&logoColor=ffffff
 [release-badge]: https://img.shields.io/github/v/release/andreihar/taibun.js?color=38618c&style=for-the-badge
 [release]: https://github.com/andreihar/taibun.js/releases
 [licence-badge]: https://img.shields.io/github/license/andreihar/taibun.js?color=000000&style=for-the-badge
 [licence]: LICENSE
-[linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=ffffff
 [linkedin]: https://www.linkedin.com/in/andrei-harbachov/
+[py-badge]: https://img.shields.io/badge/Python_Version-346c99?style=for-the-badge&logo=python&logoColor=fcce3d
+[py-link]: https://github.com/andreihar/taibun
 
-[pypi]: https://pypi.org/project/taibun
+[npm]: https://www.npmjs.com/package/taibun
 [bug]: https://github.com/andreihar/taibun.js/issues
 [online-dictionary]: http://ip194097.ntcu.edu.tw/ungian/soannteng/chil/Taihoa.asp
 [itaigi-dictionary]: https://itaigi.tw/
