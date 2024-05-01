@@ -5,17 +5,17 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/andreihar/taibun">
+  <a href="https://github.com/andreihar/taibun.js">
     <img src="logo.png" alt="Logo" width="90" height="80">
   </a>
   
-# Taibun
+# Taibun.js
 
 
 
 <!-- PROJECT SHIELDS -->
+[![Contributions][contributions-badge]][contributions]
 [![Tests][tests-badge]][tests]
-[![Contributors][contributors-badge]][contributors]
 [![Release][release-badge]][release]
 [![Licence][licence-badge]][licence]
 [![LinkedIn][linkedin-badge]][linkedin]
@@ -26,7 +26,7 @@
 包括台語的單詞標記器
 
 [回報程式缺點][bug] •
-[PyPI][pypi]
+[npm][npm]
 
 </div>
 
@@ -40,6 +40,7 @@
 <details open>
   <summary>目錄</summary>
   <ol>
+    <li><a href="#版本">版本</a></li>
     <li><a href="#安裝">安裝</a></li>
     <li>
       <a href="#用法">用法</a>
@@ -62,19 +63,27 @@
     </li>
     <li><a href="#例">例</a></li>
     <li><a href="#數據">數據</a></li>
+    <li><a href="#致謝">致謝</a></li>
     <li><a href="#牌照">牌照</a></li>
   </ol>
 </details>
 
 
 
+<!-- OTHER VERSIONS -->
+## 版本
+
+[![Python Version][py-badge]][py-link]
+
+
+
 <!-- INSTALL -->
 ## 安裝
 
-Taibun 會曉通過 [pypi][pypi] 安裝
+Taibun 會曉通過 [npm][npm] 安裝
 
 ```bash
-$ pip install taibun
+$ npm install taibun --save
 ```
 
 
@@ -86,12 +95,12 @@ $ pip install taibun
 
 `Converter` 類別使用開發人員指定的參數將漢文音譯為所選的音譯系統。繁體佮簡體攏合用。
 
-```python
-# 建構仔
-c = Converter(system, dialect, format, delimiter, sandhi, punctuation, convert_non_cjk)
+```js
+// 建構仔
+c = new Converter({ system, dialect, format, delimiter, sandhi, punctuation, convertNonCjk });
 
-# 音譯漢文
-c.get(input)
+// 音譯漢文
+c.get(input);
 ```
 
 #### System
@@ -141,7 +150,7 @@ c.get(input)
 
 * `'-'` - 對著 `Tailo`, `POJ`, `Tongiong`
 * `''` - 對著 `Pingyim`
-* `' '` - 對著 `Zhuyin`, `TLPA`
+* `' '` - 對著 `Zhuyin`, `TLPA`, `IPA`
 
 | 文本 | '-'     | ''     | ' '     |
 | ---- | ------- | ------ | ------- |
@@ -149,23 +158,23 @@ c.get(input)
 
 #### Sandhi
 
-`sandhi` String - 將[台語變調規則][sandhi-wiki]做用佇單詞音節內。
+`sandhi` String - 用[台語變調規則][sandhi-wiki]。
 
 因為編碼所有變調法度困難，Taibun 提供濟種模式變調改換以支援自訂變調處理。
 
 * `none` - 無執行任何變調
 * `auto` - 上接近台語的正確音調變音，包括代詞、後娗佮帶有「仔」詞的音調變音
-* `exc_last` - 除了最後一个音節以外，每一个音節攏變調
-* `incl_last` - 包括上尾一个音節在內，每一个音節攏變調
+* `excLast` - 除了最後一个音節以外，每一个音節攏變調
+* `inclLast` - 包括上尾一个音節在內，每一个音節攏變調
 
 預設值看所選的 `system` 決定:
 
-* `True` - 對著 `Tongiong`
-* `False` - 對著 `Tailo`, `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `IPA`
+* `auto` - 對著 `Tongiong`
+* `none` - 對著 `Tailo`, `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `IPA`
 
-| 文本         | none                 | auto                 | exc_last             | incl_last            |
-| ------------ | -------------------- | -------------------- | -------------------- | -------------------- |
-| 這是台灣囡仔 | Tse sī Tâi-uân gín-á | Tse sì Tāi-uān gin-á | Tsē sì Tāi-uān gin-á | Tsē sì Tāi-uān gin-a |
+| 文本             | none                      | auto                       | excLast                   | inclLast                  |
+| ---------------- | ------------------------- | -------------------------- | ------------------------- | ------------------------- |
+| 這是你的手機仔無 | Tse sī lí ê tshiú-ki-á bô | Tse sì li ē tshiu-kī-á bô? | Tsē sì li ē tshiu-kī-a bô | Tsē sì li ē tshiu-kī-a bō |
 
 變調規則也會隨著選的方言而有所改變。
 
@@ -186,12 +195,12 @@ c.get(input)
 
 #### Convert non-CJK
 
-`convert_non_cjk` Boolean - 定義轉換非中文單詞。會當用台羅來做其他羅馬拼音系統。
+`convertNonCjk` Boolean - 定義轉換非中文單詞。會當用台羅來做其他羅馬拼音系統。
 
-* `True` - 轉換非中文字詞
-* `False` (預設) - 干焦轉換中文字詞
+* `true` - 轉換非中文字詞
+* `false` (預設) - 干焦轉換中文字詞
 
-| 文本      | False                   | True                    |
+| 文本      | false                   | true                    |
 | --------- | ----------------------- | ----------------------- |
 | 我食pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ |
 
@@ -199,25 +208,27 @@ c.get(input)
 
 `Tokeniser` 類別佇台語句子做類似 [NLTK wordpunct_tokenize][nltk-tokenize] 的標記化。
 
-```python
-# 建構仔
-t = Tokeniser()
+```js
+// 建構仔
+t = new Tokeniser();
 
-# 標記台語句
-t.tokenise(input)
+// 標記台語句
+t.tokenise(input);
 ```
 
 ### 其他的功能
 
-```python
-# 轉換做繁體
-to_traditional(input)
+實用的台語 NLP 助手功能。
 
-# 轉換做簡體
-to_simplified(input)
+```js
+// 轉換做繁體
+toTraditional(input);
 
-# 檢查字串是毋是完全由中文字符組成
-is_cjk(input)
+// 轉換做簡體
+toSimplified(input);
+
+// 檢查字串是毋是完全由中文字符組成
+isCjk(input);
 ```
 
 
@@ -225,108 +236,108 @@ is_cjk(input)
 <!-- EXAMPLE -->
 ## 例
 
-```python
-# Converter
-from taibun import Converter
+```js
+// Converter
+const { Converter } = require('taibun');
 
-## System
-c = Converter() # system 預設值: Tailo
-c.get('先生講，學生恬恬聽。')
+//// System
+c = new Converter(); // system 預設值: Tailo
+c.get('先生講，學生恬恬聽。');
 >> Sian-sinn kóng, ha̍k-sing tiām-tiām thiann.
 
-c = Converter(system='Zhuyin')
-c.get('先生講，學生恬恬聽。')
+c = new Converter({ system: 'Zhuyin' });
+c.get('先生講，學生恬恬聽。');
 >> ㄒㄧㄢ ㄒㆪ ㄍㆲˋ, ㄏㄚㆶ˙ ㄒㄧㄥ ㄉㄧㆰ˫ ㄉㄧㆰ˫ ㄊㄧㆩ.
 
-## Dialect
-c = Converter() # dialect 預設值: south
-c.get("我欲用箸食魚")
+//// Dialect
+c = new Converter(); // dialect 預設值: south
+c.get("我欲用箸食魚");
 >> Guá beh īng tī tsia̍h hî
 
-c = Converter(dialect='north')
-c.get("我欲用箸食魚")
+c = new Converter({ dialect: 'north' });
+c.get("我欲用箸食魚");
 >> Guá bueh īng tū tsia̍h hû
 
-## Format
-c = Converter() # 佇 Tailo 中，format 預設值: mark
-c.get("生日快樂")
+//// Format
+c = new Converter(); // 佇 Tailo 中，format 預設值: mark
+c.get("生日快樂");
 >> Senn-ji̍t khuài-lo̍k
 
-c = Converter(format='number')
-c.get("生日快樂")
+c = new Converter({ format: 'number' });
+c.get("生日快樂");
 >> Senn1-jit8 khuai3-lok8
 
-c = Converter(format='strip')
-c.get("生日快樂")
+c = new Converter({ format: 'strip' });
+c.get("生日快樂");
 >> Senn-jit khuai-lok
 
-## Delimiter
-c = Converter(delimiter='')
-c.get("先生講，學生恬恬聽。")
+//// Delimiter
+c = new Converter({ delimiter: '' });
+c.get("先生講，學生恬恬聽。");
 >> Siansinn kóng, ha̍ksing tiāmtiām thiann.
 
-c = Converter(system='Pingyim', delimiter='-')
-c.get("先生講，學生恬恬聽。")
+c = new Converter({ system: 'Pingyim', delimiter: '-' });
+c.get("先生講，學生恬恬聽。");
 >> Siān-snī gǒng, hág-sīng diâm-diâm tinā.
 
-## Sandhi
-c = Converter() # 佇 Tailo 中，sandhi 預設值: none
-c.get("這是台灣囡仔")
+//// Sandhi
+c = new Converter(); // 佇 Tailo 中，sandhi 預設值: none
+c.get("這是台灣囡仔");
 >> Tse sī Tâi-uân gín-á
 
-c = Converter(sandhi='auto')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'auto' });
+c.get("這是台灣囡仔");
 >> Tse sì Tāi-uān gin-á
 
-c = Converter(sandhi='exc_last')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'excLast' });
+c.get("這是台灣囡仔");
 >> Tsē sì Tāi-uān gin-á
 
-c = Converter(sandhi='incl_last')
-c.get("這是台灣囡仔")
+c = new Converter({ sandhi: 'inclLast' });
+c.get("這是台灣囡仔");
 >> Tsē sì Tāi-uān gin-a
 
-## Punctuation
-c = Converter() # punctuation 預設值: format
-c.get("太空朋友，恁好！恁食飽未？")
+//// Punctuation
+c = new Converter(); // punctuation 預設值: format
+c.get("太空朋友，恁好！恁食飽未？");
 >> Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē?
 
-c = Converter(punctuation='none')
-c.get("太空朋友，恁好！恁食飽未？")
+c = new Converter({ punctuation: 'none' });
+c.get("太空朋友，恁好！恁食飽未？");
 >> thài-khong pîng-iú，lín-hó！lín tsia̍h-pá buē？
 
-## Convert non-CJK
-c = Convert(system='Zhuyin') # convert_non_cjk 預設值: False
-c.get("我食pháng")
+//// Convert non-CJK
+c = new Convert({ system: 'Zhuyin' }); // convertNonCjk 預設值: false
+c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng
 
-c = Convert(system='Zhuyin', convert_non_cjk=True)
-c.get("我食pháng")
+c = new Convert({ system: 'Zhuyin', convertNonCjk: true });
+c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
 
 
-# Tokeniser
-from taibun import Tokeniser
+// Tokeniser
+const { Tokeniser } = require('taibun');
 
-t = Tokeniser()
-t.tokenise("太空朋友，恁好！恁食飽未？")
+t = new Tokeniser();
+t.tokenise("太空朋友，恁好！恁食飽未？");
 >> ['太空', '朋友', '，', '恁好', '！', '恁', '食飽', '未', '？']
 
 
-# 其他的功能
-from taibun import to_traditional, to_simplified, is_cjk
+// 其他的功能
+const { toTraditional, toSimplified, isCjk } = require('taibun');
 
-to_traditional("我听无台湾话")
+toTraditional("我听无台湾话");
 >> 我聽無台灣話
 
-to_simplified("我聽無臺灣話")
+toSimplified("我聽無臺灣話");
 >> 我听无台湾话
 
-is_cjk('我食麭')
->> True
+isCjk('我食麭');
+>> true
 
-is_cjk('我食pháng')
->> False
+isCjk('我食pháng');
+>> false
 ```
 
 
@@ -356,19 +367,21 @@ is_cjk('我食pháng')
 
 
 <!-- MARKDOWN LINKS -->
-[tests]: https://github.com/andreihar/taibun/actions
-[tests-badge]: https://img.shields.io/github/actions/workflow/status/andreihar/taibun/ci.yaml?style=for-the-badge&logo=github&label=構建
-[contributors-badge]: https://img.shields.io/github/contributors/andreihar/taibun?style=for-the-badge&label=貢獻者
-[contributors]: #usage
-[release-badge]: https://img.shields.io/github/v/release/andreihar/taibun?color=38618c&style=for-the-badge&label=發布
-[release]: https://github.com/andreihar/taibun/releases
-[licence-badge]: https://img.shields.io/github/license/andreihar/taibun?color=000000&style=for-the-badge&label=牌照
+[contributions]: https://github.com/andreihar/taibun.js/issues
+[contributions-badge]: https://img.shields.io/badge/歡迎-貢獻協助-be132d?style=for-the-badge&logo=github
+[tests]: https://github.com/andreihar/taibun.js/actions
+[tests-badge]: https://img.shields.io/github/actions/workflow/status/andreihar/taibun.js/ci.yaml?style=for-the-badge&logo=github-actions&logoColor=ffffff&label=構建
+[release-badge]: https://img.shields.io/github/v/release/andreihar/taibun.js?color=38618c&style=for-the-badge&label=發布
+[release]: https://github.com/andreihar/taibun.js/releases
+[licence-badge]: https://img.shields.io/github/license/andreihar/taibun.js?color=000000&style=for-the-badge&label=牌照
 [licence]: ../LICENSE
-[linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white
+[linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=ffffff
 [linkedin]: https://www.linkedin.com/in/andrei-harbachov/
+[py-badge]: https://img.shields.io/badge/Python_版本-346c99?style=for-the-badge&logo=python&logoColor=fcce3d
+[py-link]: https://github.com/andreihar/taibun
 
-[pypi]: https://pypi.org/project/taibun
-[bug]: https://github.com/andreihar/taibun/issues
+[npm]: https://www.npmjs.com/package/taibun
+[bug]: https://github.com/andreihar/taibun.js/issues
 [online-dictionary]: http://ip194097.ntcu.edu.tw/ungian/soannteng/chil/Taihoa.asp
 [itaigi-dictionary]: https://itaigi.tw/
 [data-via]: https://github.com/ChhoeTaigi/ChhoeTaigiDatabase
