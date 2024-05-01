@@ -85,7 +85,7 @@ class Converter {
 				let dialectPart = this.dialect === 'north' ? word[0].split("/")[1] : word[0].split("/")[0];
 				word = [dialectPart, ...word.slice(1)];
 			}
-		} else if (!this.convertNonCjk) {
+		} else if (!this.convertNonCjk || ".,!?\"#$%&()*+/:;<=>@[\\]^`{|}~\t。．，、！？；：（）［］【】「」“”".includes(word[0])) {
 			return word[0];
 		}
 		word = this.systemConversion(word).replace('---', '--');
@@ -259,12 +259,14 @@ class Converter {
 			} else if (item.length > 1 && item.endsWith("仔")) {
 				return [item, "a suff"];
 			} else {
-				return [item, i < input.length - 1 && isCjk(input[i + 1])];
+				let last = i < input.length - 1;
+				let result = this.convertNonCjk ? last : last && isCjk(input[i + 1]);
+				return [item, result];
 			}
 		});
 		resultList = sandhiLogic[this.sandhi] || resultList;
 		for (let i = resultList.length - 2; i >= 0; i--) {
-			if (Converter.suffixes.includes(resultList[i + 1][0])) {
+			if ((this.convertNonCjk && resultList[i + 1][0].startsWith('--')) || Converter.suffixes.includes(resultList[i + 1][0])) {
 				resultList[i] = [resultList[i][0], false];
 			}
 		}
