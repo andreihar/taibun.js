@@ -1,8 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+let wordDict, tradDict;
 
-const wordDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/words.json'), 'utf8'));
-const tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
+if (typeof window === 'undefined') {
+	// Node js
+	const fs = require('fs');
+	const path = require('path');
+	wordDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/words.json'), 'utf8'));
+	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
+} else {
+	// Browser
+	wordDict = require('./data/words.json');
+	tradDict = require('./data/simplified.json');
+}
+
 const simplifiedDict = Object.entries(tradDict).reduce((acc, [k, v]) => ({ ...acc, [v]: k }), { '臺': '台' });
 
 // Helper to check if the character is a Chinese character
@@ -66,6 +75,9 @@ class Converter {
 
 	// Convert tokenised text into specified transliteration system
 	get(input) {
+		if (!input.trim()) {
+			return "";
+		}
 		let converted = new (require('./index.js').Tokeniser)().tokenise(toTraditional(input));
 		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
 		if (this.punctuation === 'format') {
