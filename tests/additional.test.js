@@ -5,7 +5,7 @@ test('convert simplified', () => {
 	expect(c.get('我爱学语言')).toBe('Guá ài o̍h gí-giân');
 });
 
-test('to traditional', () => {
+test('toTraditional', () => {
 	expect(toTraditional('干休')).toBe('干休');
 	expect(toTraditional('干杯')).toBe('乾杯');
 	expect(toTraditional('干部')).toBe('幹部');
@@ -35,7 +35,7 @@ test('traditional vars', () => {
 	expect(c.get('踊躍')).toBe('ióng-io̍k');
 });
 
-test('to simplified', () => {
+test('toSimplified', () => {
 	expect(toSimplified('干休')).toBe('干休');
 	expect(toSimplified('乾杯')).toBe('干杯');
 	expect(toSimplified('幹部')).toBe('干部');
@@ -53,7 +53,7 @@ test('to simplified', () => {
 	expect(toSimplified('個人')).toBe('个人');
 });
 
-test('is cjk', () => {
+test('isCjk', () => {
 	expect(isCjk('漢')).toBe(true);
 	expect(isCjk('a')).toBe(false);
 	expect(isCjk('。')).toBe(false);
