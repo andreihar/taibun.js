@@ -1,5 +1,5 @@
 const { Converter } = require('taibun');
-const checker = require('./utils');
+const { checker } = require('./utils');
 
 const hanjiData = ["標價", "按呢", "介紹人", "八字", "圾洗", "轄區", "福建", "娘囝", "毋免", "白話字", "業產", "佛祖", "木香", "姆婆"];
 

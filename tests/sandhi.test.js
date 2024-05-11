@@ -1,5 +1,5 @@
 const { Converter } = require('taibun');
-const checker = require('./utils');
+const { checker } = require('./utils');
 
 const hanjiData = ["開始", "巧氣", "寄回", "肉包", "翕甌", "彼號", "確信", "南面", "未來", "篾蓆", "業務", "罰金", "學生"];
 const hanjiSentence = ["太空朋友，恁好！恁食飽未"];

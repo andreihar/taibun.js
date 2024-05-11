@@ -1,5 +1,5 @@
 const { Converter } = require('taibun');
-const checker = require('./utils');
+const { checker } = require('./utils');
 
 const hanjiData = ["khai-sí", "khá-khì", "kià-huê", "bah-pau", "hip-au", "hit-hō", "khak-sìn", "lâm-bīn", "bī-lâi", "bi̍h-tshio̍h", "gia̍p-bū", "hua̍t-kim", "ha̍k-sing"];
 const hanjiSentence = ["Thài-khong pîng-iú lín-hó! Lín tsia̍h-pá buē", "Thôo kha tshing-khì--ah"];

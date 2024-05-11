@@ -1,5 +1,5 @@
 const { Converter } = require('taibun');
-const checker = require('./utils');
+const { checker } = require('./utils');
 
 const hanjiData = ["標價", "按呢", "介紹人", "祝你今仔日真好的日子", "咱的食飯", "公車遲到矣"];
 

@@ -1,5 +1,5 @@
 const { Converter } = require('taibun');
-const checker = require('./utils');
+const { checker } = require('./utils');
 
 const hanjiData = ["這是臺南，簡稱「南」（白話字：Tâi-lâm；注音符號：ㄊㄞˊ ㄋㄢˊ，國語：Táinán）。1623年，荷蘭佇臺南近海中个安平起基地。1624年，荷蘭退出澎湖了後，對遮个開發，建設了熱蘭遮城（Fort Zeelandia）。"];
 
