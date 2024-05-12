@@ -98,18 +98,84 @@ class Converter {
 	static tt = '[ТŊ_ТКŊ]';
 	static defaultDelimiter = {};
 	static defaultSandhi = {};
+	static systemConfigs = {
+		'tailo': {
+			'placement': ['ia' + this.tt + 'u', 'ua' + this.tt + 'i', 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt + 'i', 'a' + this.tt + 'u', 'o' + this.tt + 'o', 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'o' + this.tt + 'o', 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'tones': ['', '', '́', '̀', '', '̂', '̌', '̄', '̍', '̋']
+		},
+		'poj': {
+			'convert': { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' },
+			'placement': ['oa' + this.tt + 'h', 'oa' + this.tt + 'n', 'oa' + this.tt + 'ng', 'oa' + this.tt + 'ⁿ', 'oa' + this.tt + 't', 'ia' + this.tt + 'u', 'oe' + this.tt + 'h', 'o' + this.tt + 'e', 'oa' + this.tt + 'i', 'u' + this.tt + 'i', 'o' + this.tt + 'a', 'a' + this.tt + 'i', 'a' + this.tt + 'u', 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'a' + this.tt, 'o' + this.tt, 'o͘' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'tones': ['', '', '́', '̀', '', '̂', '', '̄', '̍', '']
+		},
+		'zhuyin': {
+			'convert': { 'p4': 'ㆴ4', 'p8': 'ㆴ8', 'k4': 'ㆶ4', 'k8': 'ㆶ8', 't4': 'ㆵ4', 't8': 'ㆵ8', 'h4': 'ㆷ4', 'h8': 'ㆷ8', 'h0': '0', 'tshing': 'ㄑㄧㄥ', 'tshinn': 'ㄑㆪ', 'phing': 'ㄆㄧㄥ', 'phinn': 'ㄆㆪ', 'tsing': 'ㄐㄧㄥ', 'tsinn': 'ㄐㆪ', 'ainn': 'ㆮ', 'aunn': 'ㆯ', 'giok': 'ㆣㄧㄜㆶ', 'ngai': 'ㄫㄞ', 'ngau': 'ㄫㄠ', 'ngoo': 'ㄫㆦ', 'ping': 'ㄅㄧㄥ', 'pinn': 'ㄅㆪ', 'senn': 'ㄙㆥ', 'sing': 'ㄒㄧㄥ', 'sinn': 'ㄒㆪ', 'tshi': 'ㄑㄧ', 'ang': 'ㄤ', 'ann': 'ㆩ', 'enn': 'ㆥ', 'ing': 'ㄧㄥ', 'inn': 'ㆪ', 'mai': 'ㄇㄞ', 'mau': 'ㄇㄠ', 'mng': 'ㄇㆭ', 'moo': 'ㄇㆦ', 'mua': 'ㄇㄨㄚ', 'mue': 'ㄇㄨㆤ', 'mui': 'ㄇㄨㄧ', 'nga': 'ㄫㄚ', 'nge': 'ㄫㆤ', 'ngi': 'ㄫㄧ', 'ong': 'ㆲ', 'onn': 'ㆧ', 'tsh': 'ㄘ', 'tsi': 'ㄐㄧ', 'unn': 'ㆫ', 'ai': 'ㄞ', 'am': 'ㆰ', 'an': 'ㄢ', 'au': 'ㄠ', 'ji': 'ㆢㄧ', 'kh': 'ㄎ', 'ma': 'ㄇㄚ', 'me': 'ㄇㆤ', 'mi': 'ㄇㄧ', 'ng': 'ㆭ', 'ok': 'ㆦㆶ', 'om': 'ㆱ', 'oo': 'ㆦ', 'ph': 'ㄆ', 'si': 'ㄒㄧ', 'th': 'ㄊ', 'ts': 'ㄗ', 'a': 'ㄚ', 'b': 'ㆠ', 'e': 'ㆤ', 'g': 'ㆣ', 'h': 'ㄏ', 'i': 'ㄧ', 'j': 'ㆡ', 'k': 'ㄍ', 'l': 'ㄌ', 'm': 'ㆬ', 'n': 'ㄋ', 'o': 'ㄜ', 'p': 'ㄅ', 's': 'ㄙ', 't': 'ㄉ', 'u': 'ㄨ' },
+			'tones': ['', '', 'ˋ', '˪', '', 'ˊ', '', '˫', '˙']
+		},
+		'tlpa': {
+			'convert': { 'tsh': 'ch', 'ts': 'c' }
+		},
+		'pingyim': {
+			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne', 'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c', 'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb', 't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn' },
+			'placement': ['ua' + this.tt + 'i', 'ia' + this.tt + 'o', 'a' + this.tt + 'i', 'a' + this.tt + 'o', 'oo' + this.tt, 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt, 'n' + this.tt],
+			'tones': ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', '']
+		},
+		'tongiong': {
+			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'oo': 'o', 'om': 'om', 'ong': 'ong', 'ir': 'i', 'tsh': 'c', 'ts': 'z', 'nng': 'nng', 'ng': 'ng', 'g': 'gh', 'kh': 'k', 'k': 'g', 'ph': 'p', 'p': 'b', 'b': 'bh', 'th': 't', 't': 'd', 'j': 'r' },
+			'placement': ['ua' + this.tt + 'i', 'ia' + this.tt + 'o', 'a' + this.tt + 'i', 'a' + this.tt + 'o', 'oo' + this.tt, 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'tones': ['̊', '', '̀', '̂', '̄', '̆', '', '̄', '', '́']
+		},
+		'ipa': {
+			'convert': { 'tsing': 'tɕiɪŋ', 'jiang': 'dʑiaŋ', 'tshing': 'tɕʰiɪŋ', 'tsik': 'tɕiɪk', 'tshik': 'tɕʰiɪk', 'jian': 'dʑiɛn', 'jiat': 'dʑiɛt', 'tshi': 'tɕʰi', 'iann': 'iã', 'ainn': 'ãi', 'iang': 'iaŋ', 'nng': 'nŋ', 'mia': 'miã', 'mui': 'muĩ', 'mue': 'muẽ', 'mua': 'muã', 'ma': 'mã', 'me': 'mẽ', 'mi': 'mĩ', 'moo': 'mɔ̃', 'nia': 'niã', 'nua': 'nuã', 'na': 'nã', 'ne': 'nẽ', 'ni': 'nĩ', 'noo': 'nɔ̃', 'ngia': 'ŋiã', 'ngiu': 'ŋiũ', 'nga': 'ŋã', 'nge': 'ŋẽ', 'ngi': 'ŋĩ', 'ngoo': 'ŋɔ̃', 'ing': 'iɪŋ', 'tsh': 'tsʰ', 'tsi': 'tɕi', 'ian': 'iɛn', 'iat': 'iɛt', 'onn': 'ɔ̃', 'ong': 'ɔŋ', 'ik': 'iɪk', 'ji': 'dʑi', 'kh': 'kʰ', 'ng': 'ŋ', 'oo': 'ɔ', 'nn': '̃', 'hm': 'hm̩', 'ph': 'pʰ', 'th': 'tʰ', 'ok': 'ɔk', 'om': 'ɔm', 'j': 'dz', 'o': 'ə' },
+			'convert2': { 'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': '0' },
+			'tones': ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵']
+		}
+	};
 	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖'];
 	static noSandhi = ['這', '彼', '遮', '遐'];
 	static location = ['頂', '跤', '外', '內'];
 
 	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false } = {}) {
 		this.system = system.toLowerCase();
-		this.dialect = dialect.toLowerCase();
 		this.format = format;
 		this.delimiter = delimiter !== Converter.defaultDelimiter ? delimiter : this.setDefaultDelimiter();
 		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
 		this.punctuation = punctuation;
 		this.convertNonCjk = convertNonCjk;
+		this.declarations(dialect.toLowerCase());
+	}
+
+
+	// Helper to declare system-specific conversion information
+	declarations(dialect) {
+		// Conversion
+		this.conversionFunc = {
+			'poj': this.tailoToPoj,
+			'zhuyin': this.tailoToZhuyin,
+			'tlpa': this.tailoToTlpa,
+			'pingyim': this.tailoToPingyim,
+			'tongiong': this.tailoToTi,
+			'ipa': this.tailoToIpa,
+			'tailo': this.tailoToTailo
+		}[this.system] || ((word) => word[0]);
+
+		let config = Converter.systemConfigs[this.system];
+		if (config && 'tones' in config) this.tones = config['tones'];
+		if (config && 'placement' in config) this.placement = config['placement'].concat(config['placement'].map(s => s.charAt(0).toUpperCase() + s.slice(1)));
+		if (config && 'convert' in config) this.convert = { ...config['convert'], ...Object.fromEntries(Object.entries(config['convert']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])) };
+		if (config && 'convert2' in config) this.convert2 = { ...config['convert2'], ...Object.fromEntries(Object.entries(config['convert2']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])) };
+
+		// Dialect
+		this.sandhiConversion = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
+		this.aSandhi = { '1': '7', '2': '1', '3': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '1', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '7' };
+		this.wordDict = Object.fromEntries(Object.entries(wordDict).map(([k, v]) => [k, v.includes('/') ? (dialect === 'north' ? v.split('/')[1] : v.split('/')[0]) : v]));
+		if (dialect === 'north') {
+			this.sandhiConversion['5'] = '3';
+			if (this.system === 'ipa') {
+				this.convert['o'] = 'o';
+				this.tones = ['', '⁵⁵', '⁵¹', '²¹', '³²', '²⁴', '', '³³', '⁴'];
+			}
+		}
 	}
 
 
@@ -133,16 +199,16 @@ class Converter {
 
 	// Helper to convert separate words
 	convertTokenised(word) {
-		if (word[0] in wordDict) {
-			word = [wordDict[word[0]], ...word.slice(1)];
-			if (word[0].includes("/")) {
-				let dialectPart = this.dialect === 'north' ? word[0].split("/")[1] : word[0].split("/")[0];
-				word = [dialectPart, ...word.slice(1)];
-			}
+		if (word[0] in this.wordDict) {
+			word = [this.wordDict[word[0]], ...word.slice(1)];
+			// if (word[0].includes("/")) {
+			// 	let dialectPart = this.dialect === 'north' ? word[0].split("/")[1] : word[0].split("/")[0];
+			// 	word = [dialectPart, ...word.slice(1)];
+			// }
 		} else if (!this.convertNonCjk || ".,!?\"#$%&()*+/:;<=>@[\\]^`{|}~\t。．，、！？；：（）［］【】「」“”".includes(word[0])) {
 			return word[0];
 		}
-		word = this.systemConversion(word).replace('---', '--');
+		word = this.conversionFunc(word).replace('---', '--');
 		if (this.format === 'number' && ['tailo', 'poj'].includes(this.system)) {
 			word = this.markToNumber(word);
 		}
@@ -164,16 +230,16 @@ class Converter {
 
 
 	// Helper switch for converting 漢字 based on defined transliteration system
-	systemConversion(word) {
-		if (this.system === 'poj') return this.tailoToPoj(word);
-		if (this.system === 'zhuyin') return this.tailoToZhuyin(word);
-		if (this.system === 'tlpa') return this.tailoToTlpa(word);
-		if (this.system === 'pingyim') return this.tailoToPingyim(word);
-		if (this.system === 'tongiong') return this.tailoToTi(word);
-		if (this.system === 'ipa') return this.tailoToIpa(word);
-		if (['auto', 'excLast', 'inclLast'].includes(this.sandhi)) return this.tailoToTailo(word);
-		else return word[0];
-	}
+	// systemConversion(word) {
+	// 	if (this.system === 'poj') return this.tailoToPoj(word);
+	// 	if (this.system === 'zhuyin') return this.tailoToZhuyin(word);
+	// 	if (this.system === 'tlpa') return this.tailoToTlpa(word);
+	// 	if (this.system === 'pingyim') return this.tailoToPingyim(word);
+	// 	if (this.system === 'tongiong') return this.tailoToTi(word);
+	// 	if (this.system === 'ipa') return this.tailoToIpa(word);
+	// 	if (['auto', 'excLast', 'inclLast'].includes(this.sandhi)) return this.tailoToTailo(word);
+	// 	else return word[0];
+	// }
 
 
 	// Helper functions to set delimiter according to transliteration system if wasn't explicitly defined by user
@@ -279,18 +345,13 @@ class Converter {
 
 	// Helper to apply tone sandhi to a word
 	toneSandhi(words, last) {
-		let sandhi = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
-		const aSandhi = { '1': '7', '2': '1', '3': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '1', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '7' };
-		if (this.dialect === 'north') {
-			sandhi['5'] = '3';
-		}
 		const indices = last === 'a suff' && words.length > 1
 			? [...Array(words.length - 2).keys()]
 			: (!last ? [...Array(words.length - 1).keys()]
 				: [...Array(words.length).keys()]);
-		const sandhiWords = indices.map(i => this.replacementTool(sandhi, words[i]));
+		const sandhiWords = indices.map(i => this.replacementTool(this.sandhiConversion, words[i]));
 		if (last === 'a suff' && words.length > 1) {
-			sandhiWords.push(this.replacementTool(aSandhi, words[words.length - 2]));
+			sandhiWords.push(this.replacementTool(this.aSandhi, words[words.length - 2]));
 		}
 		if (!last || last === 'a suff') {
 			sandhiWords.push(words[words.length - 1]);
@@ -299,7 +360,7 @@ class Converter {
 	}
 
 
-	// Helpre to define which words should be sandhi'd fully
+	// Helper to define which words should be sandhi'd fully
 	toneSandhiPosition(input) {
 		const sandhiLogic = {
 			'excLast': input.map((char, i) => [char, i !== input.length - 1]),
@@ -333,33 +394,16 @@ class Converter {
 	// Helper to convert syllable from Tai-lo to Tai-lo
 	// (called only in cases when tone sandhi is applied)
 	tailoToTailo(input) {
-		const placement = [
-			'ia' + Converter.tt + 'u', 'ua' + Converter.tt + 'i', 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt, 'a' + Converter.tt + 'i',
-			'a' + Converter.tt + 'u', 'o' + Converter.tt + 'o', 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'o' + Converter.tt + 'o', 'a' + Converter.tt,
-			'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
-		];
-		const tones = ["", "", "́", "̀", "", "̂", "̌", "̄", "̍", "̋"];
-		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		input = this.getNumberTones(input).map(nt => this.getMarkTone(nt, placement, tones)).join('-');
+		input = this.getNumberTones(input).map(nt => this.getMarkTone(nt, this.placement, this.tones)).join('-');
 		return input.replace(Converter.suffixToken, '--');
 	}
 
 
 	// Helper to convert syllable from Tai-lo to POJ
 	tailoToPoj(input) {
-		const placement = [
-			'oa' + Converter.tt + 'h', 'oa' + Converter.tt + 'n', 'oa' + Converter.tt + 'ng', 'oa' + Converter.tt + 'ⁿ', 'oa' + Converter.tt + 't',
-			'ia' + Converter.tt + 'u', 'oe' + Converter.tt + 'h', 'o' + Converter.tt + 'e', 'oa' + Converter.tt + 'i', 'u' + Converter.tt + 'i', 'o' + Converter.tt + 'a',
-			'a' + Converter.tt + 'i', 'a' + Converter.tt + 'u', 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'a' + Converter.tt,
-			'o' + Converter.tt, 'o͘' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
-		];
-		const convert = { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' };
-		const tones = ['', '', '́', '̀', '', '̂', '', '̄', '̍', ''];
-		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		input = this.getNumberTones(input).map(nt => {
-			const replaced = this.replacementTool(convert, nt);
-			return this.getMarkTone(replaced, placement, tones);
+			const replaced = this.replacementTool(this.convert, nt);
+			return this.getMarkTone(replaced, this.placement, this.tones);
 		}).join('-');
 		return input.replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
 	}
@@ -367,28 +411,14 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to 方音符號 (zhuyin)
 	tailoToZhuyin(input) {
-		const convert = {
-			'p4': 'ㆴ4', 'p8': 'ㆴ8', 'k4': 'ㆶ4', 'k8': 'ㆶ8', 't4': 'ㆵ4', 't8': 'ㆵ8', 'h4': 'ㆷ4', 'h8': 'ㆷ8', 'h0': '0',
-			'tshing': 'ㄑㄧㄥ', 'tshinn': 'ㄑㆪ', 'phing': 'ㄆㄧㄥ', 'phinn': 'ㄆㆪ', 'tsing': 'ㄐㄧㄥ', 'tsinn': 'ㄐㆪ',
-			'ainn': 'ㆮ', 'aunn': 'ㆯ', 'giok': 'ㆣㄧㄜㆶ', 'ngai': 'ㄫㄞ', 'ngau': 'ㄫㄠ', 'ngoo': 'ㄫㆦ', 'ping': 'ㄅㄧㄥ',
-			'pinn': 'ㄅㆪ', 'senn': 'ㄙㆥ', 'sing': 'ㄒㄧㄥ', 'sinn': 'ㄒㆪ', 'tshi': 'ㄑㄧ',
-			'ang': 'ㄤ', 'ann': 'ㆩ', 'enn': 'ㆥ', 'ing': 'ㄧㄥ', 'inn': 'ㆪ', 'mai': 'ㄇㄞ', 'mau': 'ㄇㄠ', 'mng': 'ㄇㆭ',
-			'moo': 'ㄇㆦ', 'mua': 'ㄇㄨㄚ', 'mue': 'ㄇㄨㆤ', 'mui': 'ㄇㄨㄧ', 'nga': 'ㄫㄚ', 'nge': 'ㄫㆤ', 'ngi': 'ㄫㄧ',
-			'ong': 'ㆲ', 'onn': 'ㆧ', 'tsh': 'ㄘ', 'tsi': 'ㄐㄧ', 'unn': 'ㆫ',
-			'ai': 'ㄞ', 'am': 'ㆰ', 'an': 'ㄢ', 'au': 'ㄠ', 'ji': 'ㆢㄧ', 'kh': 'ㄎ', 'ma': 'ㄇㄚ', 'me': 'ㄇㆤ', 'mi': 'ㄇㄧ',
-			'ng': 'ㆭ', 'ok': 'ㆦㆶ', 'om': 'ㆱ', 'oo': 'ㆦ', 'ph': 'ㄆ', 'si': 'ㄒㄧ', 'th': 'ㄊ', 'ts': 'ㄗ',
-			'a': 'ㄚ', 'b': 'ㆠ', 'e': 'ㆤ', 'g': 'ㆣ', 'h': 'ㄏ', 'i': 'ㄧ', 'j': 'ㆡ', 'k': 'ㄍ', 'l': 'ㄌ', 'm': 'ㆬ',
-			'n': 'ㄋ', 'o': 'ㄜ', 'p': 'ㄅ', 's': 'ㄙ', 't': 'ㄉ', 'u': 'ㄨ'
-		};
-		const tones = ['', '', 'ˋ', '˪', '', 'ˊ', '', '˫', '˙'];
 		let output = [];
 		for (let nt of this.getNumberTones([input[0].toLowerCase(), input[1]])) {
-			nt = this.replacementTool(convert, nt).replace(Converter.suffixToken, '');
+			nt = this.replacementTool(this.convert, nt).replace(Converter.suffixToken, '');
 			if (nt.length > 2 && nt[nt.length - 2] === 'ㄋ') {
 				nt = nt.slice(0, -2) + 'ㄣ' + nt[nt.length - 1];
 			}
 			if (this.format !== 'number') {
-				nt = Array.from(nt).map(t => isNaN(parseInt(t)) ? t : tones[parseInt(t)]).join('');
+				nt = Array.from(nt).map(t => isNaN(parseInt(t)) ? t : this.tones[parseInt(t)]).join('');
 			}
 			output.push(nt);
 		}
@@ -398,33 +428,16 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to TLPA
 	tailoToTlpa(input) {
-		const convert = { 'tsh': 'ch', 'ts': 'c' };
-		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
-		input = this.getNumberTones(input).map(nt => this.replacementTool(convert, nt)).join('-');
+		input = this.getNumberTones(input).map(nt => this.replacementTool(this.convert, nt)).join('-');
 		return input.replace(Converter.suffixToken, '');
 	}
 
 
 	// Helper to convert syllable from Tai-lo to Bbanlam pingyim
 	tailoToPingyim(input) {
-		const placement = [
-			'ua' + Converter.tt + 'i', 'ia' + Converter.tt + 'o', 'a' + Converter.tt + 'i', 'a' + Converter.tt + 'o',
-			'oo' + Converter.tt, 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt,
-			'a' + Converter.tt, 'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt, 'n' + Converter.tt
-		];
-		const convert = {
-			'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8',
-			'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne',
-			'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c',
-			'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb',
-			't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn'
-		};
-		const tones = ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', ''];
-		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		let output = [];
 		for (let nt of this.getNumberTones(input)) {
-			let replaced = this.replacementTool(convert, nt);
+			let replaced = this.replacementTool(this.convert, nt);
 			const firstChar = replaced[0];
 			const secondChar = replaced[1];
 			if (firstChar.toLowerCase() === 'i') {
@@ -450,7 +463,7 @@ class Converter {
 			if (replaced.slice(-3, -1) === 'ln') {
 				replaced = replaced.slice(0, -3) + 'n' + replaced[replaced.length - 1];
 			}
-			output.push(this.format !== 'number' ? this.getMarkTone(replaced, placement, tones) : replaced);
+			output.push(this.format !== 'number' ? this.getMarkTone(replaced, this.placement, this.tones) : replaced);
 		}
 		return output.join('-').replace(Converter.suffixToken, '');
 	}
@@ -458,27 +471,12 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to Tong-iong ping-im
 	tailoToTi(input) {
-		let placement = [
-			'ua' + Converter.tt + 'i', 'ia' + Converter.tt + 'o', 'a' + Converter.tt + 'i', 'a' + Converter.tt + 'o',
-			'oo' + Converter.tt, 'ia' + Converter.tt, 'iu' + Converter.tt, 'io' + Converter.tt, 'ua' + Converter.tt, 'ue' + Converter.tt, 'ui' + Converter.tt,
-			'a' + Converter.tt, 'o' + Converter.tt, 'e' + Converter.tt, 'i' + Converter.tt, 'u' + Converter.tt, 'n' + Converter.tt + 'g', 'm' + Converter.tt
-		];
-		// plosives don't change, ptkh 4/8 -> ptkh 4/8
-		let convert = {
-			'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8',
-			'oo': 'o', 'om': 'om', 'ong': 'ong', 'ir': 'i', 'tsh': 'c',
-			'ts': 'z', 'nng': 'nng', 'ng': 'ng', 'g': 'gh', 'kh': 'k', 'k': 'g',
-			'ph': 'p', 'p': 'b', 'b': 'bh', 'th': 't', 't': 'd', 'j': 'r'
-		};
-		const tones = ["̊", "", "̀", "̂", "̄", "̆", "", "̄", "", "́"];
-		placement.push(...placement.map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		const numberTones = this.getNumberTones(input).map(nt => nt.slice(-2, -1) === 'o' ? nt.slice(0, -2) + 'or' + nt.slice(-1) : nt);
 		input = numberTones.map(nt => {
 			if (this.format !== 'number') {
-				return this.getMarkTone(this.replacementTool(convert, nt), placement, tones);
+				return this.getMarkTone(this.replacementTool(this.convert, nt), this.placement, this.tones);
 			} else {
-				return this.replacementTool(convert, nt);
+				return this.replacementTool(this.convert, nt);
 			}
 		}).join('-');
 		return input.replace(Converter.suffixToken, '--');
@@ -487,27 +485,9 @@ class Converter {
 
 	// Helper to convert syllable from Tai-lo to International Phonetic Alphabet
 	tailoToIpa(input) {
-		let convert = {
-			'tsing': 'tɕiɪŋ', 'jiang': 'dʑiaŋ', 'tshing': 'tɕʰiɪŋ', 'tsik': 'tɕiɪk', 'tshik': 'tɕʰiɪk',
-			'jian': 'dʑiɛn', 'jiat': 'dʑiɛt', 'tshi': 'tɕʰi',
-			'iann': 'iã', 'ainn': 'ãi', 'iang': 'iaŋ', 'nng': 'nŋ',
-			'mia': 'miã', 'mui': 'muĩ', 'mue': 'muẽ', 'mua': 'muã', 'ma': 'mã', 'me': 'mẽ', 'mi': 'mĩ', 'moo': 'mɔ̃', // m nasalisation
-			'nia': 'niã', 'nua': 'nuã', 'na': 'nã', 'ne': 'nẽ', 'ni': 'nĩ', 'noo': 'nɔ̃', // n nasalisation
-			'ngia': 'ŋiã', 'ngiu': 'ŋiũ', 'nga': 'ŋã', 'nge': 'ŋẽ', 'ngi': 'ŋĩ', 'ngoo': 'ŋɔ̃', // ng nasalisation
-			'ing': 'iɪŋ', 'tsh': 'tsʰ', 'tsi': 'tɕi', 'ian': 'iɛn', 'iat': 'iɛt', 'onn': 'ɔ̃',
-			'ong': 'ɔŋ', 'ik': 'iɪk', 'ji': 'dʑi', 'kh': 'kʰ', 'ng': 'ŋ', 'oo': 'ɔ', 'nn': '̃',
-			'hm': 'hm̩', 'ph': 'pʰ', 'th': 'tʰ', 'ok': 'ɔk', 'om': 'ɔm', 'j': 'dz', 'o': 'ə'
-		};
-		if (this.dialect === 'north') {
-			convert['o'] = 'o';
-		}
-		let convert2 = { 'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': '0' };
-		let tones = this.dialect !== 'north' ? ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵'] : ['', '⁵⁵', '⁵¹', '²¹', '³²', '²⁴', '', '³³', '⁴'];
-		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
-		Object.keys(convert2).forEach(s => convert2[s.charAt(0).toUpperCase() + s.slice(1)] = convert2[s].charAt(0).toUpperCase() + convert2[s].slice(1));
 		let output = [];
 		for (let numberTone of this.getNumberTones(input)) {
-			numberTone = this.replacementTool(convert, numberTone).replace(Converter.suffixToken, '');
+			numberTone = this.replacementTool(this.convert, numberTone).replace(Converter.suffixToken, '');
 			if (numberTone.includes('ŋ')) {
 				const indexOfNasal = numberTone.indexOf('ŋ');
 				const precedingChars = numberTone.slice(0, indexOfNasal).toLowerCase().split('');
@@ -519,9 +499,9 @@ class Converter {
 			if (numberTone.length === 2 && numberTone[0] === 'm') {
 				numberTone = 'm̩' + numberTone.slice(-1);
 			}
-			numberTone = this.replacementTool(convert2, numberTone);
+			numberTone = this.replacementTool(this.convert2, numberTone);
 			if (this.format !== 'number') {
-				numberTone = numberTone.split('').map(char => char.match(/\d/) ? tones[parseInt(char)] : char).join('');
+				numberTone = numberTone.split('').map(char => char.match(/\d/) ? this.tones[parseInt(char)] : char).join('');
 			}
 			output.push(numberTone.normalize('NFC'));
 		}
