@@ -201,10 +201,6 @@ class Converter {
 	convertTokenised(word) {
 		if (word[0] in this.wordDict) {
 			word = [this.wordDict[word[0]], ...word.slice(1)];
-			// if (word[0].includes("/")) {
-			// 	let dialectPart = this.dialect === 'north' ? word[0].split("/")[1] : word[0].split("/")[0];
-			// 	word = [dialectPart, ...word.slice(1)];
-			// }
 		} else if (!this.convertNonCjk || ".,!?\"#$%&()*+/:;<=>@[\\]^`{|}~\t。．，、！？；：（）［］【】「」“”".includes(word[0])) {
 			return word[0];
 		}
@@ -227,19 +223,6 @@ class Converter {
 		}
 		return word.replace(/--/g, Converter.suffixToken).replace(/-/g, this.delimiter).replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
 	}
-
-
-	// Helper switch for converting 漢字 based on defined transliteration system
-	// systemConversion(word) {
-	// 	if (this.system === 'poj') return this.tailoToPoj(word);
-	// 	if (this.system === 'zhuyin') return this.tailoToZhuyin(word);
-	// 	if (this.system === 'tlpa') return this.tailoToTlpa(word);
-	// 	if (this.system === 'pingyim') return this.tailoToPingyim(word);
-	// 	if (this.system === 'tongiong') return this.tailoToTi(word);
-	// 	if (this.system === 'ipa') return this.tailoToIpa(word);
-	// 	if (['auto', 'excLast', 'inclLast'].includes(this.sandhi)) return this.tailoToTailo(word);
-	// 	else return word[0];
-	// }
 
 
 	// Helper functions to set delimiter according to transliteration system if wasn't explicitly defined by user
