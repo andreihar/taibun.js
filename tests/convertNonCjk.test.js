@@ -105,7 +105,7 @@ describe('sentence auto', () => {
 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴ lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵ lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ bue³³", "Tʰɔ²² kʰa²² tɕʰiɪŋ²² kʰi¹¹ a/Tʰɔ²¹ kʰa³³ tɕʰiɪŋ³³ kʰi²¹ a"], "IPA"]
 	];
 	testData.forEach(([transl, system]) => {
-		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		const data = hanjiSentence.map((h, i) => [h, transl[i]]);
 		test(`testing: ${system}`, () => {
 			checker(data, new Converter({ system, sandhi: 'auto', convertNonCjk: true }), new Converter({ system, dialect: "north", sandhi: 'auto', convertNonCjk: true }));
 		});
@@ -123,7 +123,7 @@ describe('sentence none', () => {
 		[["Tʰai¹¹ kʰɔŋ⁴⁴ piɪŋ²⁵ iu⁵³ lin⁵³ hə⁵³! Lin⁵³ tɕiaʔ⁵ pa⁵³ bue²²/Tʰai²¹ kʰɔŋ⁵⁵ piɪŋ²⁴ iu⁵¹ lin⁵¹ ho⁵¹! Lin⁵¹ tɕiaʔ⁴ pa⁵¹ bue³³", "Tʰɔ²⁵ kʰa⁴⁴ tɕʰiɪŋ⁴⁴ kʰi¹¹ a/Tʰɔ²⁴ kʰa⁵⁵ tɕʰiɪŋ⁵⁵ kʰi²¹ a"], "IPA"]
 	];
 	testData.forEach(([transl, system]) => {
-		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		const data = hanjiSentence.map((h, i) => [h, transl[i]]);
 		test(`testing: ${system}`, () => {
 			checker(data, new Converter({ system, sandhi: 'none', convertNonCjk: true }), new Converter({ system, dialect: "north", sandhi: 'none', convertNonCjk: true }));
 		});
@@ -141,7 +141,7 @@ describe('sentence excLast', () => {
 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴ lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue²²/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵ lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ bue³³", "Tʰɔ²² kʰa²² tɕʰiɪŋ²² kʰi¹¹ a/Tʰɔ²¹ kʰa³³ tɕʰiɪŋ³³ kʰi²¹ a"], "IPA"]
 	];
 	testData.forEach(([transl, system]) => {
-		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		const data = hanjiSentence.map((h, i) => [h, transl[i]]);
 		test(`testing: ${system}`, () => {
 			checker(data, new Converter({ system, sandhi: 'excLast', convertNonCjk: true }), new Converter({ system, dialect: "north", sandhi: 'excLast', convertNonCjk: true }));
 		});
@@ -159,7 +159,7 @@ describe('sentence inclLast', () => {
 		[["Tʰai⁵³ kʰɔŋ²² piɪŋ²² iu⁴⁴ lin⁴⁴ hə⁴⁴! Lin⁴⁴ tɕia¹¹ pa⁴⁴ bue¹¹/Tʰai⁵¹ kʰɔŋ³³ piɪŋ²¹ iu⁵⁵ lin⁵⁵ ho⁵⁵! Lin⁵⁵ tɕia²¹ pa⁵⁵ bue²¹", "Tʰɔ²² kʰa²² tɕʰiɪŋ²² kʰi¹¹ a/Tʰɔ²¹ kʰa³³ tɕʰiɪŋ³³ kʰi²¹ a"], "IPA"]
 	];
 	testData.forEach(([transl, system]) => {
-		const data = hanjiSentence.map((h, i) => `${h},${transl[i]}`);
+		const data = hanjiSentence.map((h, i) => [h, transl[i]]);
 		test(`testing: ${system}`, () => {
 			checker(data, new Converter({ system, sandhi: 'inclLast', convertNonCjk: true }), new Converter({ system, dialect: "north", sandhi: 'inclLast', convertNonCjk: true }));
 		});

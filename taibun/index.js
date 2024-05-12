@@ -5,14 +5,16 @@ if (typeof window === 'undefined') {
 	const fs = require('fs');
 	const path = require('path');
 	wordDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/words.json'), 'utf8'));
-	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
+	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/traditional.json'), 'utf8'));
+	varsDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/vars.json'), 'utf8'));
 } else {
 	// Browser
 	wordDict = require('./data/words.json');
-	tradDict = require('./data/simplified.json');
+	tradDict = require('./data/traditional.json');
+	varsDict = require('./data/vars.json');
 }
 
-const simplifiedDict = Object.entries(tradDict).reduce((acc, [k, v]) => ({ ...acc, [v]: k }), { '臺': '台' });
+const simpDict = Object.entries(tradDict).reduce((acc, [k, v]) => (v.forEach(item => acc[item] = k), acc), {});
 
 // Helper to check if the character is a Chinese character
 function isCjk(input) {
@@ -29,14 +31,54 @@ function isCjk(input) {
 	});
 }
 
-// Convert Simplified to Traditional characters
-function toTraditional(input) {
-	return [...input].map(c => tradDict[c] || c).join('');
-}
-
 // Convert Traditional to Simplified characters
 function toSimplified(input) {
-	return [...input].map(c => simplifiedDict[c] || c).join('');
+	return [...input].map(c => simpDict[c] || c).join('');
+}
+
+// Convert Simplified to Traditional characters
+function toTraditional(input) {
+	return getBestSolution(input).join('');
+}
+
+function getBestSolution(input) {
+	input = Array.from(input).map(c => varsDict[c] || c).join('');
+	let traditionalVariants = [''];
+	for (let c of input) {
+		if (tradDict[c]) {
+			traditionalVariants = traditionalVariants.flatMap(variant => tradDict[c].map(trad => variant + trad));
+		} else {
+			traditionalVariants = traditionalVariants.map(variant => variant + c);
+		}
+	}
+	let tokenised = [];
+	for (let traditional of traditionalVariants) {
+		let tempTokenised = [];
+		while (traditional) {
+			for (let j = 4; j > 0; j--) {
+				if (traditional.length < j) {
+					continue;
+				}
+				let word = traditional.slice(0, j);
+				if (wordDict[word] || j === 1) {
+					if (j === 1 && tempTokenised.length && !(isCjk(tempTokenised[tempTokenised.length - 1]) || isCjk(word))) {
+						tempTokenised[tempTokenised.length - 1] += word;
+					} else {
+						tempTokenised.push(word);
+					}
+					traditional = traditional.slice(j);
+					break;
+				}
+			}
+			if (traditional.length === 0) {
+				traditional = "";
+			}
+		}
+		if (tempTokenised.length < tokenised.length || !tokenised.length) {
+			tokenised = tempTokenised;
+		}
+	}
+	return tokenised;
 }
 
 
@@ -78,7 +120,7 @@ class Converter {
 		if (!input.trim()) {
 			return "";
 		}
-		let converted = new (require('./index.js').Tokeniser)().tokenise(toTraditional(input));
+		let converted = new (require('./index.js').Tokeniser)(false).tokenise(toTraditional(input));
 		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
 		if (this.punctuation === 'format') {
 			return this.formatText(this.formatPunctuationWestern(converted[0].toUpperCase() + converted.slice(1)));
@@ -459,7 +501,7 @@ class Converter {
 		if (this.dialect === 'north') {
 			convert['o'] = 'o';
 		}
-		let convert2 = { 'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': 'ʔ0' };
+		let convert2 = { 'p4': 'p̚4', 'p8': 'p̚8', 'k4': 'k̚4', 'k8': 'k̚8', 't4': 't̚4', 't8': 't̚8', 'h4': 'ʔ4', 'h8': 'ʔ8', 'si': 'ɕi', 'h0': '0' };
 		let tones = this.dialect !== 'north' ? ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵'] : ['', '⁵⁵', '⁵¹', '²¹', '³²', '²⁴', '', '³³', '⁴'];
 		Object.keys(convert).forEach(s => convert[s.charAt(0).toUpperCase() + s.slice(1)] = convert[s].charAt(0).toUpperCase() + convert[s].slice(1));
 		Object.keys(convert2).forEach(s => convert2[s.charAt(0).toUpperCase() + s.slice(1)] = convert2[s].charAt(0).toUpperCase() + convert2[s].slice(1));
@@ -536,40 +578,28 @@ class Converter {
 }
 
 
+/*
+Description: Tokenises Taiwanese Hokkien sentences.
+			 Supports both Traditional and Simplified characters.
+Invariant: keepOriginal = true (default), false
+*/
 class Tokeniser {
-	constructor() { }
+	constructor(keepOriginal = true) {
+		this.keepOriginal = keepOriginal;
+	}
 
 	// Tokenise the text into separate words
 	tokenise(input) {
-		let tokenised = [];
-		let traditional = toTraditional(input);
-		while (traditional) {
-			for (let j = 4; j > 0; j--) {
-				if (traditional.length < j) {
-					continue;
-				}
-				let word = traditional.slice(0, j);
-				if (wordDict[word] || j === 1) {
-					if (j === 1 && tokenised.length && !(isCjk(tokenised[tokenised.length - 1]) || isCjk(word))) {
-						tokenised[tokenised.length - 1] += word;
-					} else {
-						tokenised.push(word);
-					}
-					traditional = traditional.slice(j);
-					break;
-				}
-			}
-			if (traditional.length === 0) {
-				traditional = "";
-			}
-		}
+		let tokenised = getBestSolution(input);
 		const punctuations = /([.,!?\"#$%&()*+/:;<=>@[\\\]^`{|}~\t。．，、！？；：（）［］【】「」“”])/;
-		const indices = [0].concat(tokenised.map(item => item.length));
-		tokenised = indices.slice(0, -1).map((_, i) => {
-			const start = indices.slice(0, i + 1).reduce((a, b) => a + b, 0);
-			const end = start + indices[i + 1];
-			return input.substring(start, end);
-		});
+		if (this.keepOriginal) {
+			const indices = [0].concat(tokenised.map(item => item.length));
+			tokenised = indices.slice(0, -1).map((_, i) => {
+				const start = indices.slice(0, i + 1).reduce((a, b) => a + b, 0);
+				const end = start + indices[i + 1];
+				return input.substring(start, end);
+			});
+		}
 		tokenised = tokenised.flatMap(word => {
 			const splitByPunctuation = word.split(punctuations);
 			const splitBySpaces = splitByPunctuation.flatMap(subword => subword.split(" "));
