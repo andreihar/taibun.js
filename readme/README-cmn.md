@@ -58,8 +58,13 @@
             <li><a href="#convert-non-cjk">Convert non-CJK</a></li>
           </ul>
         </li>
-        <li><a href="#tokeniser">Tokeniser</a></li>
-        <li><a href="#其他功能">其他功能</a></li>
+        <li>
+          <a href="#tokeniser">Tokeniser</a>
+          <ul>
+            <li><a href="#keep-original">Keep original</a></li>
+          </ul>
+        </li>
+        <li><a href="#其他函式">其他函式</a></li>
       </ul>
     </li>
     <li><a href="#例子">例子</a></li>
@@ -94,13 +99,13 @@ $ npm install taibun --save
 
 ### Converter
 
-`Converter` 類別使用開發人員指定的參數將漢字音譯為所選的音譯系統。適用於繁體和簡體字符。
+`Converter` 類別使用開發人員指定的參數將中文字音譯為所選的音譯系統。適用於繁體和簡體字符。
 
 ```js
 // 建構子
 c = new Converter({ system, dialect, format, delimiter, sandhi, punctuation, convertNonCjk });
 
-// 音譯漢字
+// 音譯中文字
 c.get(input);
 ```
 
@@ -173,9 +178,9 @@ c.get(input);
 * `auto` - 對於 `Tongiong`
 * `none` - 對於 `Tailo`, `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `IPA`
 
-| 文本             | none                      | auto                       | excLast                   | inclLast                  |
-| ---------------- | ------------------------- | -------------------------- | ------------------------- | ------------------------- |
-| 這是你的手機仔無 | Tse sī lí ê tshiú-ki-á bô | Tse sì li ē tshiu-kī-á bô? | Tsē sì li ē tshiu-kī-a bô | Tsē sì li ē tshiu-kī-a bō |
+| 文本             | none                    | auto                   | excLast                | inclLast               |
+| ---------------- | ----------------------- | ---------------------- | ---------------------- | ---------------------- |
+| 這是你的茶桌仔無 | Tse sī lí ê tê-toh-á bô | Tse sì li ē tē-to-á bô | Tsē sì li ē tē-tó-a bô | Tsē sì li ē tē-tó-a bō |
 
 變調規則也會根據所選擇的方言而變化。
 
@@ -211,24 +216,38 @@ c.get(input);
 
 ```js
 // 建構子
-t = new Tokeniser();
+t = new Tokeniser(keepOriginal);
 
 // 標記臺灣語句
 t.tokenise(input);
 ```
 
-### 其他功能
+#### Keep original
 
-實用的臺灣話 NLP 助手功能。
+`keepOriginal` Boolean - 定義是否保留輸入的原始字符。
+
+* `true` (預設) - 保留原始字符
+* `false` - 使用資料集中定義的字符替換原始字符
+
+| 文本         | true                 | false                |
+| ------------ | -------------------- | -------------------- |
+| 臺灣火鸡肉饭 | ['臺灣', '火鸡肉饭'] | ['台灣', '火雞肉飯'] |
+
+### 其他函式
+
+實用的臺灣話 NLP 助手函式。
+
+`toTraditional` 函式將輸入轉換為繁體字元以便於資料集使用。也可應對繁體字符變體。
+
+`toSimplified` 函式將輸入轉換為簡體字元。
+
+`isCjk` 函式檢查輸入字串是否完全由中文字符組成。
 
 ```js
-// 轉換為繁體
 toTraditional(input);
 
-// 轉換為簡體
 toSimplified(input);
 
-// 檢查字串是否完全由中文字符組成
 isCjk(input);
 ```
 
@@ -283,20 +302,20 @@ c.get("先生講，學生恬恬聽。");
 
 //// Sandhi
 c = new Converter(); // 在 Tailo 中，sandhi 預設值: none
-c.get("這是台灣囡仔");
->> Tse sī Tâi-uân gín-á
+c.get("這是你的茶桌仔無");
+>> Tse sī lí ê tê-toh-á bô
 
 c = new Converter({ sandhi: 'auto' });
-c.get("這是台灣囡仔");
->> Tse sì Tāi-uān gin-á
+c.get("這是你的茶桌仔無");
+>> Tse sì li ē tē-to-á bô
 
 c = new Converter({ sandhi: 'excLast' });
-c.get("這是台灣囡仔");
->> Tsē sì Tāi-uān gin-á
+c.get("這是你的茶桌仔無");
+>> Tsē sì li ē tē-tó-a bô
 
 c = new Converter({ sandhi: 'inclLast' });
-c.get("這是台灣囡仔");
->> Tsē sì Tāi-uān gin-a
+c.get("這是你的茶桌仔無");
+>> Tsē sì li ē tē-tó-a bō
 
 //// Punctuation
 c = new Converter(); // punctuation 預設值: format
@@ -308,11 +327,11 @@ c.get("太空朋友，恁好！恁食飽未？");
 >> thài-khong pîng-iú，lín-hó！lín tsia̍h-pá buē？
 
 //// Convert non-CJK
-c = new Convert({ system: 'Zhuyin' }); // convertNonCjk 預設值: false
+c = new Converter({ system: 'Zhuyin' }); // convertNonCjk 預設值: false
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng
 
-c = new Convert({ system: 'Zhuyin', convertNonCjk: true });
+c = new Converter({ system: 'Zhuyin', convertNonCjk: true });
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
 
@@ -324,17 +343,41 @@ t = new Tokeniser();
 t.tokenise("太空朋友，恁好！恁食飽未？");
 >> ['太空', '朋友', '，', '恁好', '！', '恁', '食飽', '未', '？']
 
+//// Keep Original
+t = new Tokeniser(); // keepOriginal 預設值: true
+t.tokenise("爲啥物臺灣遮爾好？");
+>> ['爲啥物', '臺灣', '遮爾', '好', '？']
 
-// 其他功能
+t.tokenise("为啥物台湾遮尔好？");
+>> ['为啥物', '台湾', '遮尔', '好', '？']
+
+t = new Tokeniser(false);
+t.tokenise("爲啥物臺灣遮爾好？");
+>> ['為啥物', '台灣', '遮爾', '好', '？']
+
+t.tokenise("为啥物台湾遮尔好？");
+>> ['為啥物', '台灣', '遮爾', '好', '？']
+
+
+// Other Functions
 const { toTraditional, toSimplified, isCjk } = require('taibun');
 
-toTraditional("我听无台湾话");
->> 我聽無台灣話
+//// toTraditional
+toTraditional("我听无台语");
+>> 我聽無台語
 
-toSimplified("我聽無臺灣話");
->> 我听无台湾话
+toTraditional("我爱这个个人台面");
+>> 我愛這个個人檯面
 
-isCjk('我食麭');
+toTraditional("爲啥物");
+>> 為啥物
+
+//// toSimplified
+toSimplified("我聽無台語");
+>> 我听无台语
+
+//// isCjk
+isCjk('我食麭')
 >> true
 
 isCjk('我食pháng');
@@ -377,7 +420,7 @@ isCjk('我食pháng');
 [licence-badge]: https://img.shields.io/github/license/andreihar/taibun.js?color=000000&style=for-the-badge&label=執照
 [licence]: ../LICENSE
 [linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=ffffff
-[linkedin]: https://www.linkedin.com/in/andrei-harbachov/
+[linkedin]: https://www.linkedin.com/in/andreihar/
 [py-badge]: https://img.shields.io/badge/Python_版本-346c99?style=for-the-badge&logo=python&logoColor=fcce3d
 [py-link]: https://github.com/andreihar/taibun
 [downloads-badge]: https://img.shields.io/npm/d18m/taibun.svg?style=for-the-badge&label=下載
