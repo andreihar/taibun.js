@@ -58,7 +58,12 @@ Includes word tokeniser for Taiwanese Hokkien.
             <li><a href="#convert-non-cjk">Convert non-CJK</a></li>
           </ul>
         </li>
-        <li><a href="#tokeniser">Tokeniser</a></li>
+        <li>
+          <a href="#tokeniser">Tokeniser</a>
+          <ul>
+            <li><a href="#keep-original">Keep original</a></li>
+          </ul>
+        </li>
         <li><a href="#other-functions">Other Functions</a></li>
       </ul>
     </li>
@@ -135,7 +140,7 @@ c.get(input);
 
 `format` String - format in which tones will be represented in the converted sentence.
 
-* `mark` (default) - uses diacritics for each syllable. Not available for TLPA.
+* `mark` (default) - uses diacritics for each syllable. Not available for TLPA
 * `number` - add a number which represents the tone at the end of the syllable
 * `strip` - removes any tone marking
 
@@ -173,9 +178,9 @@ Default value depends on the chosen `system`:
 * `auto` - for `Tongiong`
 * `none` - for `Tailo`, `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `IPA`
 
-| text             | none                      | auto                       | excLast                   | inclLast                  |
-| ---------------- | ------------------------- | -------------------------- | ------------------------- | ------------------------- |
-| 這是你的手機仔無 | Tse sī lí ê tshiú-ki-á bô | Tse sì li ē tshiu-kī-á bô? | Tsē sì li ē tshiu-kī-a bô | Tsē sì li ē tshiu-kī-a bō |
+| text             | none                    | auto                   | excLast                | inclLast               |
+| ---------------- | ----------------------- | ---------------------- | ---------------------- | ---------------------- |
+| 這是你的茶桌仔無 | Tse sī lí ê tê-toh-á bô | Tse sì li ē tē-to-á bô | Tsē sì li ē tē-tó-a bô | Tsē sì li ē tē-tó-a bō |
 
 Sandhi rules also change depending on the dialect chosen.
 
@@ -187,8 +192,8 @@ Sandhi rules also change depending on the dialect chosen.
 
 `punctuation` String
 
-* `format` (default) - converts Chinese-style punctuation to Latin-style punctuation and capitalises words at the beginning of each sentence.
-* `none` - preserves Chinese-style punctuation and doesn't capitalise words at the beginning of new sentences.
+* `format` (default) - converts Chinese-style punctuation to Latin-style punctuation and capitalises words at the beginning of each sentence
+* `none` - preserves Chinese-style punctuation and doesn't capitalise words at the beginning of new sentences
 
 | text                                                                           | format                                                                                            | none                                                                                                 |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -211,24 +216,38 @@ Sandhi rules also change depending on the dialect chosen.
 
 ```js
 // Constructor
-t = new Tokeniser();
+t = new Tokeniser(keepOriginal);
 
 // Tokenise Taiwanese Hokkien sentence
 t.tokenise(input);
 ```
 
+#### Keep original
+
+`keepOriginal` Boolean - defines whether the original characters of the input are retained.
+
+* `true` (default) - preserve original characters
+* `false` - replace original characters with characters defined in the dataset
+
+| text         | true                 | false                |
+| ------------ | -------------------- | -------------------- |
+| 臺灣火鸡肉饭 | ['臺灣', '火鸡肉饭'] | ['台灣', '火雞肉飯'] |
+
 ### Other Functions
 
 Handy functions for NLP tasks in Taiwanese Hokkien.
 
+`toTraditional` function converts input to Traditional Chinese characters that are used in the dataset. Also accounts for different variants of Traditional Chinese characters.
+
+`toSimplified` function converts input to Simplified Chinese characters.
+
+`isCjk` function checks whether the input string consists entirely of Chinese characters.
+
 ```js
-// Convert to Traditional
 toTraditional(input);
 
-// Convert to Simplified
 toSimplified(input);
 
-// Check if the string is fully composed of Chinese characters
 isCjk(input);
 ```
 
@@ -283,20 +302,20 @@ c.get("先生講，學生恬恬聽。");
 
 //// Sandhi
 c = new Converter(); // for Tailo, sandhi none by default
-c.get("這是台灣囡仔");
->> Tse sī Tâi-uân gín-á
+c.get("這是你的茶桌仔無");
+>> Tse sī lí ê tê-toh-á bô
 
 c = new Converter({ sandhi: 'auto' });
-c.get("這是台灣囡仔");
->> Tse sì Tāi-uān gin-á
+c.get("這是你的茶桌仔無");
+>> Tse sì li ē tē-to-á bô
 
 c = new Converter({ sandhi: 'excLast' });
-c.get("這是台灣囡仔");
->> Tsē sì Tāi-uān gin-á
+c.get("這是你的茶桌仔無");
+>> Tsē sì li ē tē-tó-a bô
 
 c = new Converter({ sandhi: 'inclLast' });
-c.get("這是台灣囡仔");
->> Tsē sì Tāi-uān gin-a
+c.get("這是你的茶桌仔無");
+>> Tsē sì li ē tē-tó-a bō
 
 //// Punctuation
 c = new Converter(); // format punctuation default
@@ -308,11 +327,11 @@ c.get("太空朋友，恁好！恁食飽未？");
 >> thài-khong pîng-iú，lín-hó！lín tsia̍h-pá buē？
 
 //// Convert non-CJK
-c = new Convert({ system: 'Zhuyin' }); // false convertNonCjk default
+c = new Converter({ system: 'Zhuyin' }); // false convertNonCjk default
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng
 
-c = new Convert({ system: 'Zhuyin', convertNonCjk: true });
+c = new Converter({ system: 'Zhuyin', convertNonCjk: true });
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
 
@@ -324,17 +343,41 @@ t = new Tokeniser();
 t.tokenise("太空朋友，恁好！恁食飽未？");
 >> ['太空', '朋友', '，', '恁好', '！', '恁', '食飽', '未', '？']
 
+//// Keep Original
+t = new Tokeniser(); // true keepOriginal default
+t.tokenise("爲啥物臺灣遮爾好？");
+>> ['爲啥物', '臺灣', '遮爾', '好', '？']
+
+t.tokenise("为啥物台湾遮尔好？");
+>> ['为啥物', '台湾', '遮尔', '好', '？']
+
+t = new Tokeniser(false);
+t.tokenise("爲啥物臺灣遮爾好？");
+>> ['為啥物', '台灣', '遮爾', '好', '？']
+
+t.tokenise("为啥物台湾遮尔好？");
+>> ['為啥物', '台灣', '遮爾', '好', '？']
+
 
 // Other Functions
 const { toTraditional, toSimplified, isCjk } = require('taibun');
 
-toTraditional("我听无台湾话");
->> 我聽無台灣話
+//// toTraditional
+toTraditional("我听无台语");
+>> 我聽無台語
 
-toSimplified("我聽無臺灣話");
->> 我听无台湾话
+toTraditional("我爱这个个人台面");
+>> 我愛這个個人檯面
 
-isCjk('我食麭');
+toTraditional("爲啥物");
+>> 為啥物
+
+//// toSimplified
+toSimplified("我聽無台語");
+>> 我听无台语
+
+//// isCjk
+isCjk('我食麭')
 >> true
 
 isCjk('我食pháng');
@@ -377,7 +420,7 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 [licence-badge]: https://img.shields.io/github/license/andreihar/taibun.js?color=000000&style=for-the-badge
 [licence]: LICENSE
 [linkedin-badge]: https://img.shields.io/badge/LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=ffffff
-[linkedin]: https://www.linkedin.com/in/andrei-harbachov/
+[linkedin]: https://www.linkedin.com/in/andreihar/
 [py-badge]: https://img.shields.io/badge/Python_Version-346c99?style=for-the-badge&logo=python&logoColor=fcce3d
 [py-link]: https://github.com/andreihar/taibun
 [downloads-badge]: https://img.shields.io/npm/d18m/taibun.svg?style=for-the-badge
