@@ -100,12 +100,12 @@ class Converter {
 	static defaultSandhi = {};
 	static systemConfigs = {
 		'tailo': {
-			'placement': ['ia' + this.tt + 'u', 'ua' + this.tt + 'i', 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt + 'i', 'a' + this.tt + 'u', 'o' + this.tt + 'o', 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'o' + this.tt + 'o', 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'placement': [`ia${this.tt}u`, `ua${this.tt}i`, `ua${this.tt}`, `ue${this.tt}`, `ui${this.tt}`, `a${this.tt}i`, `a${this.tt}u`, `o${this.tt}o`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `o${this.tt}o`, `a${this.tt}`, `o${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `n${this.tt}g`, `m${this.tt}`],
 			'tones': ['', '', '́', '̀', '', '̂', '̌', '̄', '̍', '̋']
 		},
 		'poj': {
 			'convert': { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' },
-			'placement': ['oa' + this.tt + 'h', 'oa' + this.tt + 'n', 'oa' + this.tt + 'ng', 'oa' + this.tt + 'ⁿ', 'oa' + this.tt + 't', 'ia' + this.tt + 'u', 'oe' + this.tt + 'h', 'o' + this.tt + 'e', 'oa' + this.tt + 'i', 'u' + this.tt + 'i', 'o' + this.tt + 'a', 'a' + this.tt + 'i', 'a' + this.tt + 'u', 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'a' + this.tt, 'o' + this.tt, 'o͘' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'placement': [`oa${this.tt}h`, `oa${this.tt}n`, `oa${this.tt}ng`, `oa${this.tt}ⁿ`, `oa${this.tt}t`, `ia${this.tt}u`, `oe${this.tt}h`, `o${this.tt}e`, `oa${this.tt}i`, `u${this.tt}i`, `o${this.tt}a`, `a${this.tt}i`, `a${this.tt}u`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `a${this.tt}`, `o${this.tt}`, `o͘${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `n${this.tt}g`, `m${this.tt}`],
 			'tones': ['', '', '́', '̀', '', '̂', '', '̄', '̍', '']
 		},
 		'zhuyin': {
@@ -117,12 +117,12 @@ class Converter {
 		},
 		'pingyim': {
 			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne', 'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c', 'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb', 't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn' },
-			'placement': ['ua' + this.tt + 'i', 'ia' + this.tt + 'o', 'a' + this.tt + 'i', 'a' + this.tt + 'o', 'oo' + this.tt, 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt, 'n' + this.tt],
+			'placement': [`ua${this.tt}i`, `ia${this.tt}o`, `a${this.tt}i`, `a${this.tt}o`, `oo${this.tt}`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `ua${this.tt}`, `ue${this.tt}`, `ui${this.tt}`, `a${this.tt}`, `o${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `n${this.tt}g`, `m${this.tt}`, `n${this.tt}`],
 			'tones': ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', '']
 		},
 		'tongiong': {
 			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'oo': 'o', 'om': 'om', 'ong': 'ong', 'ir': 'i', 'tsh': 'c', 'ts': 'z', 'nng': 'nng', 'ng': 'ng', 'g': 'gh', 'kh': 'k', 'k': 'g', 'ph': 'p', 'p': 'b', 'b': 'bh', 'th': 't', 't': 'd', 'j': 'r' },
-			'placement': ['ua' + this.tt + 'i', 'ia' + this.tt + 'o', 'a' + this.tt + 'i', 'a' + this.tt + 'o', 'oo' + this.tt, 'ia' + this.tt, 'iu' + this.tt, 'io' + this.tt, 'ua' + this.tt, 'ue' + this.tt, 'ui' + this.tt, 'a' + this.tt, 'o' + this.tt, 'e' + this.tt, 'i' + this.tt, 'u' + this.tt, 'n' + this.tt + 'g', 'm' + this.tt],
+			'placement': [`ua${this.tt}i`, `ia${this.tt}o`, `a${this.tt}i`, `a${this.tt}o`, `oo${this.tt}`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `ua${this.tt}`, `ue${this.tt}`, `ui${this.tt}`, `a${this.tt}`, `o${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `n${this.tt}g`, `m${this.tt}`],
 			'tones': ['̊', '', '̀', '̂', '̄', '̆', '', '̄', '', '́']
 		},
 		'ipa': {
