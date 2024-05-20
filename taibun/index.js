@@ -16,6 +16,12 @@ if (typeof window === 'undefined') {
 	varsDict = require('./data/vars.json');
 }
 
+for (let [k, v] of Object.entries(tradDict)) {
+	if (k.length === 1) {
+		simpDict[v] = k;
+	}
+}
+
 // Helper to check if the character is a Chinese character
 function isCjk(input) {
 	return [...input].every(char => {
