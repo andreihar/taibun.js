@@ -17,7 +17,7 @@ if (typeof window === 'undefined') {
 }
 
 for (let [k, v] of Object.entries(tradDict)) {
-	if (k.length === 1) {
+	if (k.length === 1 && !simpDict[v]) {
 		simpDict[v] = k;
 	}
 }
