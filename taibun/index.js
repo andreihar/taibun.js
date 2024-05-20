@@ -1,4 +1,4 @@
-let wordDict, tradDict;
+let wordDict, tradDict, simpDict, varsDict;
 
 if (typeof window === 'undefined') {
 	// Node js
@@ -6,15 +6,15 @@ if (typeof window === 'undefined') {
 	const path = require('path');
 	wordDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/words.json'), 'utf8'));
 	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/traditional.json'), 'utf8'));
+	simpDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
 	varsDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/vars.json'), 'utf8'));
 } else {
 	// Browser
 	wordDict = require('./data/words.json');
 	tradDict = require('./data/traditional.json');
+	simpDict = require('./data/simplified.json');
 	varsDict = require('./data/vars.json');
 }
-
-const simpDict = Object.entries(tradDict).reduce((acc, [k, v]) => (v.forEach(item => acc[item] = k), acc), {});
 
 // Helper to check if the character is a Chinese character
 function isCjk(input) {
@@ -38,47 +38,22 @@ function toSimplified(input) {
 
 // Convert Simplified to Traditional characters
 function toTraditional(input) {
-	return getBestSolution(input).join('');
-}
-
-function getBestSolution(input) {
 	input = Array.from(input).map(c => varsDict[c] || c).join('');
-	let traditionalVariants = [''];
-	for (let c of input) {
-		if (tradDict[c]) {
-			traditionalVariants = traditionalVariants.flatMap(variant => tradDict[c].map(trad => variant + trad));
-		} else {
-			traditionalVariants = traditionalVariants.map(variant => variant + c);
-		}
-	}
-	let tokenised = [];
-	for (let traditional of traditionalVariants) {
-		let tempTokenised = [];
-		while (traditional) {
-			for (let j = 4; j > 0; j--) {
-				if (traditional.length < j) {
-					continue;
-				}
-				let word = traditional.slice(0, j);
-				if (wordDict[word] || j === 1) {
-					if (j === 1 && tempTokenised.length && !(isCjk(tempTokenised[tempTokenised.length - 1]) || isCjk(word))) {
-						tempTokenised[tempTokenised.length - 1] += word;
-					} else {
-						tempTokenised.push(word);
-					}
-					traditional = traditional.slice(j);
-					break;
-				}
+	let traditional = [];
+	while (input) {
+		for (let j = 4; j > 0; j--) {
+			if (input.length < j) {
+				continue;
 			}
-			if (traditional.length === 0) {
-				traditional = "";
+			let word = input.slice(0, j);
+			if (tradDict[word] || j === 1) {
+				traditional.push(tradDict[word] || word);
+				input = input.slice(j);
+				break;
 			}
 		}
-		if (tempTokenised.length < tokenised.length || !tokenised.length) {
-			tokenised = tempTokenised;
-		}
 	}
-	return tokenised;
+	return traditional.join("");
 }
 
 
@@ -553,7 +528,28 @@ class Tokeniser {
 
 	// Tokenise the text into separate words
 	tokenise(input) {
-		let tokenised = getBestSolution(input);
+		let tokenised = [];
+		let traditional = toTraditional(input);
+		while (traditional) {
+			for (let j = 4; j > 0; j--) {
+				if (traditional.length < j) {
+					continue;
+				}
+				let word = traditional.slice(0, j);
+				if (wordDict[word] || j === 1) {
+					if (j === 1 && tokenised.length && !(isCjk(tokenised[tokenised.length - 1]) || isCjk(word))) {
+						tokenised[tokenised.length - 1] += word;
+					} else {
+						tokenised.push(word);
+					}
+					traditional = traditional.slice(j);
+					break;
+				}
+			}
+			if (traditional.length === 0) {
+				traditional = "";
+			}
+		}
 		const punctuations = /([.,!?\"#$%&()*+/:;<=>@[\\\]^`{|}~\t。．，、！？；：（）［］【】「」“”])/;
 		if (this.keepOriginal) {
 			const indices = [0].concat(tokenised.map(item => item.length));
