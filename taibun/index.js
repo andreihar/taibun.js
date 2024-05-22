@@ -39,6 +39,7 @@ function isCjk(input) {
 
 // Convert Traditional to Simplified characters
 function toSimplified(input) {
+	input = Array.from(input).map(c => varsDict[c] || c).join('');
 	return [...input].map(c => simpDict[c] || c).join('');
 }
 
@@ -112,7 +113,7 @@ class Converter {
 			'tones': ['', '⁴⁴', '⁵³', '¹¹', '²¹', '²⁵', '', '²²', '⁵']
 		}
 	};
-	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '喔', '嘖'];
+	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '啦', '喔', '嘖'];
 	static noSandhi = ['這', '彼', '遮', '遐'];
 	static location = ['頂', '跤', '外', '內'];
 
@@ -149,7 +150,12 @@ class Converter {
 		// Dialect
 		this.sandhiConversion = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
 		this.aSandhi = { '1': '7', '2': '1', '3': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '1', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '7' };
-		this.wordDict = Object.fromEntries(Object.entries(wordDict).map(([k, v]) => [k, v.includes('/') ? (dialect === 'north' ? v.split('/')[1] : v.split('/')[0]) : v]));
+		this.wordDict = new Proxy(wordDict, {
+			get: (target, property) => {
+				let value = target[property];
+				return value && value.includes('/') ? (dialect === 'north' ? value.split('/')[1] : value.split('/')[0]) : value;
+			}
+		});
 		if (dialect === 'north') {
 			this.sandhiConversion['5'] = '3';
 			if (this.system === 'ipa') {
