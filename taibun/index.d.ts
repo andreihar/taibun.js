@@ -14,7 +14,7 @@ export class Converter {
 }
 
 export class Tokeniser {
-    constructor();
+    constructor(keepOriginal?: boolean);
     tokenise(input: string): string[];
 }
 
