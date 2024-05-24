@@ -196,16 +196,11 @@ class Converter {
 			word = this.markToNumber(word);
 		}
 		if (this.format === 'strip') {
-			if (this.system === 'tlpa') {
-				word = word.replace(/[1234578]/g, '');
-			}
-			if (this.system === 'zhuyin') {
-				word = word.replace(/[ˋ˪ˊ˫˙]/g, '');
-			}
-			if (this.system === 'ipa') {
-				word = word.replace(/[¹²³⁴⁵]/g, '');
-			} else {
-				word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+			switch (this.system) {
+				case 'tlpa': word = word.replace(/[1234578]/g, ''); break;
+				case 'zhuyin': word = word.replace(/[ˋ˪ˊ˫˙]/g, ''); break;
+				case 'ipa': word = word.replace(/[¹²³⁴⁵]/g, ''); break;
+				default: word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); break;
 			}
 		}
 		return word.replace(/--/g, Converter.suffixToken).replace(/-/g, this.delimiter).replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
@@ -585,9 +580,5 @@ class Tokeniser {
 }
 
 module.exports = {
-	Converter,
-	Tokeniser,
-	isCjk,
-	toTraditional,
-	toSimplified
+	Converter, Tokeniser, isCjk, toTraditional, toSimplified
 };

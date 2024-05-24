@@ -1,6 +1,6 @@
 {
   "name": "taibun",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Taiwanese Hokkien Transliterator and Tokeniser",
   "main": "taibun/index.js",
   "types": "taibun/index.d.ts",
