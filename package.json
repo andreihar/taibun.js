@@ -1,6 +1,6 @@
 {
   "name": "taibun",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Taiwanese Hokkien Transliterator and Tokeniser",
   "main": "taibun/index.js",
   "types": "taibun/index.d.ts",
@@ -32,7 +32,10 @@
   "bugs": {
     "url": "https://github.com/andreihar/taibun.js/issues"
   },
-  "homepage": "https://github.com/andreihar/taibun.js#readme",
+  "homepage": "https://taibun.andreihar.com",
+  "dependencies": {
+    "@msgpack/msgpack": "^2.0.0"
+  },
   "devDependencies": {
     "jest": "^29.7.0"
   },
