@@ -1,20 +1,19 @@
-const msgpack = require('@msgpack/msgpack');
 let wordDict, tradDict, simpDict, varsDict;
 
 if (typeof window === 'undefined') {
 	// Node.js
 	const fs = require('fs');
 	const path = require('path');
-	wordDict = msgpack.decode(fs.readFileSync(path.join(__dirname, 'data/words.msgpack')));
-	tradDict = msgpack.decode(fs.readFileSync(path.join(__dirname, 'data/traditional.msgpack')));
-	simpDict = msgpack.decode(fs.readFileSync(path.join(__dirname, 'data/simplified.msgpack')));
-	varsDict = msgpack.decode(fs.readFileSync(path.join(__dirname, 'data/vars.msgpack')));
+	wordDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/words.json'), 'utf8'));
+	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/traditional.json'), 'utf8'));
+	simpDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
+	varsDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/vars.json'), 'utf8'));
 } else {
 	// Browser
-	wordDict = msgpack.decode(new Uint8Array(require('./data/words.msgpack')));
-	tradDict = msgpack.decode(new Uint8Array(require('./data/traditional.msgpack')));
-	simpDict = msgpack.decode(new Uint8Array(require('./data/simplified.msgpack')));
-	varsDict = msgpack.decode(new Uint8Array(require('./data/vars.msgpack')));
+	wordDict = require('./data/words.json');
+	tradDict = require('./data/traditional.json');
+	simpDict = require('./data/simplified.json');
+	varsDict = require('./data/vars.json');
 }
 
 for (let [k, v] of Object.entries(tradDict)) {

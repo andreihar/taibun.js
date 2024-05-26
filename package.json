@@ -33,9 +33,6 @@
     "url": "https://github.com/andreihar/taibun.js/issues"
   },
   "homepage": "https://taibun.andreihar.com",
-  "dependencies": {
-    "@msgpack/msgpack": "^2.0.0"
-  },
   "devDependencies": {
     "jest": "^29.7.0"
   },
