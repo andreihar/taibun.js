@@ -536,28 +536,35 @@ class Tokeniser {
 
 	// Tokenise the text into separate words
 	tokenise(input) {
-		let tokenised = [];
 		let traditional = toTraditional(input);
-		while (traditional) {
-			for (let j = 4; j > 0; j--) {
-				if (traditional.length < j) {
-					continue;
-				}
-				let word = traditional.slice(0, j);
-				if (wordDict[word] || j === 1) {
-					if (j === 1 && tokenised.length && !(isCjk(tokenised[tokenised.length - 1]) || isCjk(word))) {
-						tokenised[tokenised.length - 1] += word;
-					} else {
-						tokenised.push(word);
+		let n = traditional.length;
+		let dp = Array.from({ length: n + 1 }, () => ({ score: Infinity, lastWord: null }));
+		dp[0].score = 0;
+
+		for (let i = 1; i <= n; i++) {
+			for (let j = Math.max(0, i - 4); j < i; j++) {
+				let word = traditional.slice(j, i);
+				if (wordDict[word] || word.length === 1) {
+					let score = dp[j].score + 1;
+					if (score < dp[i].score) {
+						dp[i].score = score;
+						dp[i].lastWord = word;
 					}
-					traditional = traditional.slice(j);
-					break;
 				}
-			}
-			if (traditional.length === 0) {
-				traditional = "";
 			}
 		}
+		let tokenised = [];
+		let i = n;
+		while (i > 0) {
+			let word = dp[i].lastWord;
+			if (tokenised.length && !(isCjk(tokenised[tokenised.length - 1]) || isCjk(word))) {
+				tokenised[tokenised.length - 1] = word + tokenised[tokenised.length - 1];
+			} else {
+				tokenised.push(word);
+			}
+			i -= word.length;
+		}
+		tokenised.reverse();
 		const punctuations = /([.,!?\"#$%&()*+/:;<=>@[\\\]^`{|}~\t。．，、！？；：（）［］【】「」“”])/;
 		if (this.keepOriginal) {
 			const indices = [0].concat(tokenised.map(item => item.length));
