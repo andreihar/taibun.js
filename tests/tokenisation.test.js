@@ -6,8 +6,14 @@ test('general tokenisation', () => {
 	expect(t.tokenise('漢字（閩南語注音: ㄏㄢˋ ㆡㄧˉ；白話字: Hàn-jī；')).toEqual(['漢字', '（', '閩南語', '注音', ':', 'ㄏㄢˋ', 'ㆡㄧˉ', '；', '白話字', ':', 'Hàn-jī', '；']);
 });
 
+test('best solution tokenisation', () => {
+	expect(t.tokenise("中國人民共和國")).toEqual(['中國', '人民', '共和國']);
+	expect(t.tokenise('中國人民雄協會')).toEqual(['中國人', '民雄', '協會']);
+	expect(t.tokenise('花蓮市議員')).toEqual(['花蓮', '市議員']);
+});
+
 test('suffix tokenisation', () => {
-	expect(t.tokenise("咱的食飯是誠好食")).toEqual(['咱', '的', '食飯', '是', '誠好', '食']);
+	expect(t.tokenise("咱的食飯是誠好食")).toEqual(['咱', '的', '食飯', '是', '誠', '好食']);
 	expect(t.tokenise("卯死矣")).toEqual(['卯死', '矣']);
 });
 
