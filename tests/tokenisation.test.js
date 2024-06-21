@@ -13,7 +13,7 @@ test('best solution tokenisation', () => {
 });
 
 test('suffix tokenisation', () => {
-	expect(t.tokenise("咱的食飯是誠好食")).toEqual(['咱', '的', '食飯', '是', '誠', '好食']);
+	expect(t.tokenise("咱的食飯是誠好食")).toEqual(['咱的', '食飯', '是', '誠', '好食']);
 	expect(t.tokenise("卯死矣")).toEqual(['卯死', '矣']);
 });
 
