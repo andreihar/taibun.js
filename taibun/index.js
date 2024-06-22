@@ -8,12 +8,14 @@ if (typeof window === 'undefined') {
 	tradDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/traditional.json'), 'utf8'));
 	simpDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/simplified.json'), 'utf8'));
 	varsDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/vars.json'), 'utf8'));
+	pronsDict = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/prons.json'), 'utf8'));
 } else {
 	// Browser
 	wordDict = require('./data/words.json');
 	tradDict = require('./data/traditional.json');
 	simpDict = require('./data/simplified.json');
 	varsDict = require('./data/vars.json');
+	pronsDict = require('./data/prons.json');
 }
 
 for (let [k, v] of Object.entries(tradDict)) {
@@ -153,7 +155,30 @@ class Converter {
 		this.wordDict = new Proxy(wordDict, {
 			get: (target, property) => {
 				let value = target[property];
-				return value && value.includes('/') ? (dialect === 'north' ? value.split('/')[1] : value.split('/')[0]) : value;
+				if (!value) return value;
+
+				if (dialect === 'south') {
+					return value;
+				} else {
+					const parts = value.toLowerCase().split(/(--|-)/).filter(s => s);
+					const variations = Object.fromEntries(Array.from(property).map(char => [char, Object.fromEntries((pronsDict[char] || []).map(v => v.split('/').length > 1 ? v.split('/') : [v, v]))]));
+					let newParts = [];
+					let charIndex = 0;
+					for (let part of parts) {
+						if (['--', '-'].includes(part)) {
+							newParts.push(part);
+						} else {
+							const char = property[charIndex];
+							if (char in variations && part in variations[char]) {
+								newParts.push(variations[char][part]);
+							} else {
+								newParts.push(part);
+							}
+							charIndex += 1;
+						}
+					}
+					return value[0] === value[0].toUpperCase() ? newParts.join('').charAt(0).toUpperCase() + newParts.join('').slice(1) : newParts.join('');
+				}
 			}
 		});
 		if (dialect === 'north') {
