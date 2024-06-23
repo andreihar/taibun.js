@@ -156,7 +156,6 @@ class Converter {
 			get: (target, property) => {
 				let value = target[property];
 				if (!value) return value;
-
 				if (dialect === 'south') {
 					return value;
 				} else {
@@ -603,7 +602,7 @@ class Tokeniser {
 			const splitBySpaces = splitByPunctuation.flatMap(subword => subword.split(" "));
 			return splitBySpaces.flatMap(word => {
 				if (!word) return [];
-				const endsWithSpecialChar = (word.endsWith('的') || word.endsWith('矣')) && word.length > 1;
+				const endsWithSpecialChar = word.endsWith('矣') && word.length > 1;
 				return endsWithSpecialChar ? [word.slice(0, -1), word.slice(-1)] : [word];
 			});
 		});
