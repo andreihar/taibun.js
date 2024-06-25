@@ -145,9 +145,13 @@ class Converter {
 
 		let config = Converter.systemConfigs[this.system];
 		if (config && 'tones' in config) this.tones = config['tones'];
-		if (config && 'placement' in config) this.placement = config['placement'].concat(config['placement'].map(s => s.charAt(0).toUpperCase() + s.slice(1)));
-		if (config && 'convert' in config) this.convert = { ...config['convert'], ...Object.fromEntries(Object.entries(config['convert']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])) };
-		if (config && 'convert2' in config) this.convert2 = { ...config['convert2'], ...Object.fromEntries(Object.entries(config['convert2']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])) };
+		if (config && 'placement' in config) {
+			const firstPart = config['placement'].slice(0, -2);
+			const lastPart = config['placement'].slice(-2);
+			this.placement = [...firstPart.map(s => s.charAt(0).toUpperCase() + s.slice(1)), ...firstPart, ...lastPart.map(s => s.charAt(0).toUpperCase() + s.slice(1)), ...lastPart];
+		}
+		if (config && 'convert' in config) this.convert = { ...Object.fromEntries(Object.entries(config['convert']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])), ...config['convert'] };
+		if (config && 'convert2' in config) this.convert2 = { ...Object.fromEntries(Object.entries(config['convert2']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])), ...config['convert2'] };
 
 		// Dialect
 		this.sandhiConversion = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
