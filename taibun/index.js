@@ -302,14 +302,15 @@ class Converter {
 	// Helper to convert syllable from Tai-lo diacritic tones to number tones
 	getNumberTone(input) {
 		const finals = ['p', 't', 'k', 'h'];
-		if (/á|é|í|ó|ú|ḿ|ńg|́/.test(input)) input += '2';
-		else if (/à|è|ì|ò|ù|m̀|ǹg|̀/.test(input)) input += '3';
-		else if (/â|ê|î|ô|û|m̂|n̂g|̂/.test(input)) input += '5';
-		else if (/ā|ē|ī|ō|ū|m̄|n̄g|̄/.test(input)) input += '7';
-		else if (/̍/.test(input)) input += '8';
-		else if (finals.includes(input[input.length - 1])) input += '4';
+		const lowerInput = input.toLowerCase();
+		if (/á|é|í|ó|ú|ḿ|ńg|́/.test(lowerInput)) input += '2';
+		else if (/à|è|ì|ò|ù|m̀|ǹg|̀/.test(lowerInput)) input += '3';
+		else if (/â|ê|î|ô|û|m̂|n̂g|̂/.test(lowerInput)) input += '5';
+		else if (/ā|ē|ī|ō|ū|m̄|n̄g|̄/.test(lowerInput)) input += '7';
+		else if (/̍/.test(lowerInput)) input += '8';
+		else if (finals.includes(lowerInput[lowerInput.length - 1])) input += '4';
 		else input += '1';
-		if (input.startsWith(Converter.suffixToken) && (input[input.length - 2] === 'h' || ['auto', 'excLast', 'inclLast'].includes(this.sandhi) || this.format === 'number')) {
+		if (input.startsWith(Converter.suffixToken) && (input.slice(-2) === 'h4' || ['auto', 'excLast', 'inclLast'].includes(this.sandhi) || this.format === 'number')) {
 			input = input.slice(0, -1) + '0';
 		}
 		input = Array.from(input.normalize("NFD")).filter(c => !/[\u0300-\u036f]/.test(c)).join('');
