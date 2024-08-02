@@ -132,10 +132,11 @@ c.get(input);
 
 * `south` (default) - [Zhangzhou][zhangzhou-wiki]-leaning pronunciation
 * `north` - [Quanzhou][quanzhou-wiki]-leaning pronunciation
+* `singapore` - Quanzhou-leaning pronunciation with [Singaporean characteristics][singapore-wiki]
 
-| text   | south         | north         |
-| ------ | ------------- | ------------- |
-| 五月節 | Gōo-gue̍h-tseh | Gōo-ge̍h-tsueh |
+| text           | south                       | north                       | singapore                  |
+| -------------- | --------------------------- | --------------------------- | -------------------------- |
+| 五月節我啉咖啡 | Gōo-gue̍h-tseh guá lim ka-pi | Gōo-ge̍h-tsueh guá lim ka-pi | Gōo-ge̍h-tsueh uá lim ko-pi |
 
 #### Format
 
@@ -185,9 +186,9 @@ Default value depends on the chosen `system`:
 
 Sandhi rules also change depending on the dialect chosen.
 
-| text | no sandhi | south   | north   |
-| ---- | --------- | ------- | ------- |
-| 台灣 | Tâi-uân   | Tāi-uân | Tài-uân |
+| text | no sandhi | south   | north / singapore |
+| ---- | --------- | ------- | ----------------- |
+| 台灣 | Tâi-uân   | Tāi-uân | Tài-uân           |
 
 #### Punctuation
 
@@ -278,6 +279,10 @@ c.get("我欲用箸食魚");
 c = new Converter({ dialect: 'north' });
 c.get("我欲用箸食魚");
 >> Guá bueh īng tū tsia̍h hû
+
+c = new Converter({ dialect: 'singapore' });
+c.get("我欲用箸食魚");
+>> Uá bueh ēng tū tsia̍h hû
 
 //// Format
 c = new Converter(); // for Tailo, mark by default
@@ -446,5 +451,6 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 [ipa-wiki]: https://en.wikipedia.org/wiki/International_Phonetic_Alphabet
 [zhangzhou-wiki]: https://en.wikipedia.org/wiki/Zhangzhou_dialects
 [quanzhou-wiki]: https://en.wikipedia.org/wiki/Quanzhou_dialects
+[singapore-wiki]: https://en.wikipedia.org/wiki/Singaporean_Hokkien
 [nltk-tokenize]: https://nltk.org/api/nltk.tokenize.html
 [sandhi-wiki]: https://en.wikipedia.org/wiki/Taiwanese_Hokkien#Tone%20sandhi:~:text=thng%E2%9F%A9%20(%22soup%22).-,Tone%20sandhi,-%5Bedit%5D

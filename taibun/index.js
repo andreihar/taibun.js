@@ -70,7 +70,7 @@ function toTraditional(input) {
 Description: Converts Chinese characters to Taiwanese Hokkien phonetic transcriptions.
 			 Supports both Traditional and Simplified characters.
 Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tongiong`, `IPA`
-		   dialect = `south` (Zhangzhou-leaning, default), `north` (Quanzhou-leaning)
+		   dialect = `south` (Zhangzhou-leaning, default), `north` (Quanzhou-leaning), `singapore` (Quanzhou-leaning with Singaporean characteristics)
 		   format = `mark` (diacritical), `number` (numeric), `strip` (no tones)
 		   delimiter = String that replaces the default delimiter
 		   sandhi = `auto`, `none`, `excLast`, `inclLast`

@@ -46,6 +46,16 @@ test('sandhi', () => {
 	});
 });
 
+test('additional vocabulary', () => {
+	const c = new Converter({ dialect: "Singapore", punctuation: 'none' });
+	const kos = ['我', '你', '甚物', '食物'];
+	const expectedResults = ['uá', 'lú', 'sīm-mi̍h', 'si̍t-bu̍t'];
+
+	kos.forEach((ko, index) => {
+		expect(c.get(ko)).toBe(expectedResults[index]);
+	});
+});
+
 test('kopi', () => {
 	const c = new Converter({ dialect: "Singapore", punctuation: 'none' });
 	const kos = ['咖啡', '烏咖啡', '咖啡杯', '咖哩', '咖咖仔'];

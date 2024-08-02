@@ -1,6 +1,6 @@
 interface ConverterOptions {
     system?: 'Tailo' | 'POJ' | 'Zhuyin' | 'TLPA' | 'Pingyim' | 'Tongiong' | 'IPA';
-    dialect?: 'south' | 'north';
+    dialect?: 'south' | 'north' | 'singapore';
     format?: 'mark' | 'number' | 'strip';
     delimiter?: string;
     sandhi?: 'auto' | 'none' | 'excLast' | 'inclLast';
