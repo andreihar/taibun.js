@@ -1,4 +1,4 @@
-let wordDict, tradDict, simpDict, varsDict;
+let wordDict, tradDict, simpDict, varsDict, pronsDict;
 
 if (typeof window === 'undefined') {
 	// Node.js
@@ -125,7 +125,7 @@ class Converter {
 
 	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false } = {}) {
 		this.system = system.toLowerCase();
-		this.dialect = dialect;
+		this.dialect = dialect.toLowerCase();
 		this.format = format;
 		this.delimiter = delimiter !== Converter.defaultDelimiter ? delimiter : this.setDefaultDelimiter();
 		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
@@ -175,12 +175,18 @@ class Converter {
 				if (!value || dialect === 'south') return value;
 				const parts = value.toLowerCase().split(/(--|-)/).filter(s => s);
 				const variations = Object.fromEntries(Array.from(property).map(char => [char, Object.fromEntries((pronsDictProxy[char] || []).map(v => v.split('/').length > 1 ? v.split('/') : [v, v]))]));
-				if (property in Converter.singaporeWords && dialect === 'singapore') {
-					Object.keys(Converter.singaporeWords[property]).forEach(char => {
-						if (char in variations) {
-							Object.assign(variations[char], Converter.singaporeWords[property][char]);
+				if (dialect === 'singapore') {
+					const substrings = new Set(
+						[...property].flatMap((_, i) => [...property.slice(i)].map((_, j) => property.slice(i, i + j + 1)))
+					);
+					substrings.forEach(substring => {
+						if (substring in Converter.singaporeWords) {
+							Object.entries(Converter.singaporeWords[substring]).forEach(([char, mappings]) => {
+								if (char in variations) Object.assign(variations[char], mappings);
+							});
 						}
 					});
+					value = value.split('').map(char => variations[char]?.[char] || char).join('');
 				}
 				let newParts = [];
 				let charIndex = 0;
@@ -404,10 +410,7 @@ class Converter {
 
 	// Helper to convert Taiwanese pronunciation to Singaporean
 	convertVariant(input) {
-		if (this.dialect === 'singapore') {
-			return input.replace('ing', 'eng');
-		}
-		return input;
+		return this.dialect === 'singapore' ? input.replace('ing', 'eng') : input;
 	}
 
 
