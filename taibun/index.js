@@ -118,7 +118,7 @@ class Converter {
 	static suffixes = ['啊', '矣', '喂', '欸', '唅', '嘿', '諾', '乎', '唷', '啦', '喔', '嘖'];
 	static noSandhi = ['這', '彼', '遮', '遐'];
 	static location = ['頂', '跤', '外', '內'];
-	static singaporeProns = { '你': ['lí/lú'], '我': ["guá/uá", "ngóo"], '物': ["bu̍t", "mi̍h", "mih"] };
+	static singaporeProns = { '你': ['lí/lú'], '我': ['guá/uá', 'ngóo'], '物': ['bu̍t', 'mi̍h', 'mih'] };
 	static singaporeWords = {
 		'咖啡': { '咖': { ka: 'ko' } }
 	};
@@ -386,9 +386,7 @@ class Converter {
 			'inclLast': input.map(char => [char, true]),
 		};
 		let resultList = input.map((item, i) => {
-			if (i < input.length - 1 && Converter.location.includes(input[i + 1])) {
-				return [item, false];
-			} else if (Converter.location.includes(item) || Converter.noSandhi.includes(item)) {
+			if (i < input.length - 1 && Converter.location.includes(input[i + 1]) || Converter.location.includes(item) || Converter.noSandhi.includes(item)) {
 				return [item, false];
 			} else if (item.length > 1 && item.endsWith("仔")) {
 				return [item, "a suff"];
@@ -463,12 +461,10 @@ class Converter {
 		let output = [];
 		for (let nt of this.getNumberTones(input)) {
 			let replaced = this.replacementTool(this.convert, this.convertVariant(nt));
-			const firstChar = replaced[0];
-			const secondChar = replaced[1];
+			const [firstChar, secondChar] = replaced;
 			if (firstChar.toLowerCase() === 'i') {
 				replaced = (firstChar === 'I' ? 'Y' : 'y') + (['a', 'u', 'o'].includes(secondChar) ? replaced.slice(1) : replaced.toLowerCase());
-			}
-			if (firstChar.toLowerCase() === 'u') {
+			} else if (firstChar.toLowerCase() === 'u') {
 				replaced = (firstChar === 'U' ? 'W' : 'w') + (nt.length > 2 && ['a', 'i', 'e', 'o'].includes(secondChar) ? replaced.slice(1) : replaced.toLowerCase());
 			}
 			if (nt[0].toLowerCase() === 'm') {
@@ -501,7 +497,7 @@ class Converter {
 			if (this.format !== 'number') {
 				return this.getMarkTone(this.replacementTool(this.convert, this.convertVariant(nt)), this.placement, this.tones);
 			} else {
-				return this.replacementTool(this.convert, nt);
+				return this.replacementTool(this.convert, this.convertVariant(nt));
 			}
 		}).join('-');
 		return input.replace(Converter.suffixToken, '--');
@@ -511,24 +507,24 @@ class Converter {
 	// Helper to convert syllable from Tai-lo to International Phonetic Alphabet
 	tailoToIpa(input) {
 		let output = [];
-		for (let numberTone of this.getNumberTones(input)) {
-			numberTone = this.replacementTool(this.convert, this.convertVariant(numberTone)).replace(Converter.suffixToken, '');
-			if (numberTone.includes('ŋ')) {
-				const indexOfNasal = numberTone.indexOf('ŋ');
-				const precedingChars = numberTone.slice(0, indexOfNasal).toLowerCase().split('');
+		for (let nt of this.getNumberTones(input)) {
+			nt = this.replacementTool(this.convert, this.convertVariant(nt)).replace(Converter.suffixToken, '');
+			if (nt.includes('ŋ')) {
+				const indexOfNasal = nt.indexOf('ŋ');
+				const precedingChars = nt.slice(0, indexOfNasal).toLowerCase().split('');
 				const noVowelsBeforeNasal = precedingChars.every(char => !'aeioɔu'.includes(char));
-				if ((numberTone.length > 2 && noVowelsBeforeNasal && indexOfNasal !== 0) || numberTone.length === 2) {
-					numberTone = numberTone.replace('ŋ', 'ŋ̍');
+				if ((nt.length > 2 && noVowelsBeforeNasal && indexOfNasal !== 0) || nt.length === 2) {
+					nt = nt.replace('ŋ', 'ŋ̍');
 				}
 			}
-			if (numberTone.length === 2 && numberTone[0] === 'm') {
-				numberTone = 'm̩' + numberTone.slice(-1);
+			if (nt.length === 2 && nt[0] === 'm') {
+				nt = 'm̩' + nt.slice(-1);
 			}
-			numberTone = this.replacementTool(this.convert2, numberTone);
+			nt = this.replacementTool(this.convert2, this.convertVariant(nt));
 			if (this.format !== 'number') {
-				numberTone = numberTone.split('').map(char => char.match(/\d/) ? this.tones[parseInt(char)] : char).join('');
+				nt = nt.split('').map(char => char.match(/\d/) ? this.tones[parseInt(char)] : char).join('');
 			}
-			output.push(numberTone.normalize('NFC'));
+			output.push(nt.normalize('NFC'));
 		}
 		return output.join('-').replace(Converter.suffixToken, '');
 	}
