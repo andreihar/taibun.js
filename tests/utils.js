@@ -1,10 +1,33 @@
 function checker(array, generalConverter, northConverter) {
-	array.forEach(word => {
-		const [hanji, translParts] = word;
-		const transl = translParts.split('/');
-		expect(generalConverter.get(hanji.trim())).toBe(transl[0].trim());
-		if (transl.length > 1) {
-			expect(northConverter.get(hanji.trim())).toBe(transl[1].trim());
+	array.forEach(([hanji, transl]) => {
+		let expectedGeneral;
+		let expectedNorth = null;
+
+		// Case 1: "general/north"
+		if (typeof transl === "string") {
+			const parts = transl.trim().split("/");
+			expectedGeneral = parts[0].trim();
+			expectedNorth = parts.length > 1 ? parts[1].trim() : null;
+		}
+
+		// Case 2: [general, north]
+		else if (Array.isArray(transl)) {
+			expectedGeneral = transl[0];
+			expectedNorth = transl.length > 1 ? transl[1] : null;
+		}
+
+		else {
+			throw new TypeError(`Unsupported transl format: ${typeof transl}`);
+		}
+
+		// Test general
+		const result = generalConverter.get(hanji);
+		expect(result).toStrictEqual(expectedGeneral);
+
+		// Test north if present
+		if (expectedNorth !== null) {
+			const resultNorth = northConverter.get(hanji);
+			expect(resultNorth).toStrictEqual(expectedNorth);
 		}
 	});
 }
