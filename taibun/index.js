@@ -76,6 +76,7 @@ Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tong
 		   sandhi = `auto`, `none`, `excLast`, `inclLast`
 		   punctuation = `format` (Latin-style, default), `none` (preserve original)
 		   convertNonCjk = true, false (default)
+		   outputTokens = true, false (default)
 */
 class Converter {
 	static suffixToken = '[ЅFFX_ТКŊ]';
@@ -123,7 +124,7 @@ class Converter {
 		'咖啡': { '咖': { ka: 'ko' } }
 	};
 
-	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false } = {}) {
+	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false, outputTokens = false } = {}) {
 		this.system = system.toLowerCase();
 		this.dialect = dialect.toLowerCase();
 		this.format = format;
@@ -131,6 +132,7 @@ class Converter {
 		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
 		this.punctuation = punctuation;
 		this.convertNonCjk = convertNonCjk;
+		this.outputTokens = outputTokens;
 		this.declarations(dialect.toLowerCase());
 	}
 
@@ -227,9 +229,12 @@ class Converter {
 			return "";
 		}
 		let converted = new (require('./index.js').Tokeniser)(false).tokenise(toTraditional(input));
-		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim()).join(' ').trim();
+		converted = this.toneSandhiPosition(converted).map(i => this.convertTokenised(i).trim());
 		if (this.punctuation === 'format') {
-			return this.formatText(this.formatPunctuationWestern(converted[0].toUpperCase() + converted.slice(1)));
+			return this.formatPunctuationWestern(converted);
+		}
+		if (this.outputTokens) {
+			return converted;
 		}
 		return this.formatPunctuationCJK(converted);
 	}
@@ -540,9 +545,12 @@ class Converter {
 		};
 		const leftSpace = { '.': '.', ',': ',', '!': '!', '?': '?', ';': ';', ':': ':', ')': ')', ']': ']', '」': '"', '”': '"', '--': '--' };
 		const rightSpace = { '(': '(', '[': '[', '「': '"', '“': '"' };
-		for (const [punctCh, punctLat] of Object.entries(punctuationMapping)) {
-			input = input.replace(new RegExp(punctCh, 'g'), punctLat);
+		input = input.map(token => punctuationMapping[token] || token);
+		input = this.formatText(input);
+		if (this.outputTokens) {
+			return input;
 		}
+		input = input.join(' ').trim();
 		for (const [left, space] of Object.entries(leftSpace)) {
 			const escapedLeft = left.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 			input = input.replace(new RegExp(' ' + escapedLeft, 'g'), space).replace(new RegExp(escapedLeft, 'g'), space);
@@ -557,6 +565,7 @@ class Converter {
 
 	// Helper to restore original CJK punctuation with appropriate spacing
 	formatPunctuationCJK(input) {
+		input = input.join(' ').trim();
 		const leftSpace = ['。', '．', '，', '、', '！', '？', '；', '：', '）', '］', '】', '」', '”', '--'];
 		const rightSpace = ['（', '［', '【', '「', '“'];
 		leftSpace.forEach(punct => {
@@ -570,11 +579,16 @@ class Converter {
 
 
 	// Helper to capitalise text in according to punctuation
-	formatText(input) {
-		const puncFilter = /([.!?]\s*)/g;
-		let splitWithPunc = input.split(puncFilter);
-		splitWithPunc = splitWithPunc.map(i => i.length > 1 ? i[0].toUpperCase() + i.slice(1) : i);
-		return splitWithPunc.join("");
+	formatText(tokens) {
+		let capitaliseNext = true;
+		for (let i = 0; i < tokens.length; i++) {
+			const t = tokens[i];
+			if (capitaliseNext && t) {
+				tokens[i] = t[0].toUpperCase() + t.slice(1);
+			}
+			capitaliseNext = t === '.' || t === '!' || t === '?';
+		}
+		return tokens;
 	}
 }
 
