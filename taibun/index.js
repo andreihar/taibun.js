@@ -89,7 +89,7 @@ class Converter {
 			'tones': ['', '', '́', '̀', '', '̂', '̌', '̄', '̍', '̋']
 		},
 		'poj': {
-			'convert': { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'uan': 'oan', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' },
+			'convert': { 'nng': 'nng', 'nnh': 'hⁿ', 'nn': 'ⁿ', 'ts': 'ch', 'ing': 'eng', 'uai': 'oai', 'ik': 'ek', 'ua': 'oa', 'ue': 'oe', 'oo': 'o͘' },
 			'placement': [`oa${this.tt}h`, `oa${this.tt}n`, `oa${this.tt}ng`, `oa${this.tt}ⁿ`, `oa${this.tt}t`, `ia${this.tt}u`, `oe${this.tt}h`, `o${this.tt}e`, `oa${this.tt}i`, `u${this.tt}i`, `o${this.tt}a`, `a${this.tt}i`, `a${this.tt}u`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `a${this.tt}`, `o${this.tt}`, `o͘${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `mn${this.tt}g`, `n${this.tt}g`, `m${this.tt}`],
 			'tones': ['', '', '́', '̀', '', '̂', '', '̄', '̍', '']
 		},
