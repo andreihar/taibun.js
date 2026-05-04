@@ -101,7 +101,7 @@ class Converter {
 			'convert': { 'tsh': 'ch', 'ts': 'c' }
 		},
 		'pingyim': {
-			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'ainn': 'nai', 'iunn': 'niu', 'ann': 'na', 'onn': 'noo', 'enn': 'ne', 'inn': 'ni', 'unn': 'nu', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c', 'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb', 't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz', 'n': 'ln', 'm': 'bbn' },
+			'convert': { 'p4': 'p4', 't4': 't4', 'k4': 'k4', 'h4': 'h4', 'p8': 'p8', 't8': 't8', 'k8': 'k8', 'h8': 'h8', 'au': 'ao', 'ph': 'p', 'nng': 'lng', 'tsh': 'c', 'ng': 'ggn', 'ts': 'z', 'th': 't', 'kh': 'k', 'ir': 'i', 'p': 'b', 'b': 'bb', 't': 'd', 'k': 'g', 'g': 'gg', 'j': 'zz' },
 			'placement': [`ua${this.tt}i`, `ia${this.tt}o`, `a${this.tt}i`, `a${this.tt}o`, `oo${this.tt}`, `ia${this.tt}`, `iu${this.tt}`, `io${this.tt}`, `ua${this.tt}`, `ue${this.tt}`, `ui${this.tt}`, `a${this.tt}`, `o${this.tt}`, `e${this.tt}`, `i${this.tt}`, `u${this.tt}`, `m${this.tt}ggn`, `ggn${this.tt}`, `bbn${this.tt}`, `n${this.tt}g`, `m${this.tt}`],
 			'tones': ['', '̄', '̌', '̀', '̄', '́', '', '̂', '́', '']
 		},
@@ -472,22 +472,38 @@ class Converter {
 			} else if (firstChar.toLowerCase() === 'u') {
 				replaced = (firstChar === 'U' ? 'W' : 'w') + (nt.length > 2 && ['a', 'i', 'e', 'o'].includes(secondChar) ? replaced.slice(1) : replaced.toLowerCase());
 			}
-			if (nt[0].toLowerCase() === 'm') {
-				if (nt.length === 2) {
-					replaced = nt[0] + nt[nt.length - 1];
-				} else if (nt[1] === 'n') {
-					replaced = nt[0] + replaced.slice(3);
+			if (replaced[0].toLowerCase() === 'n') { // Initial n
+				replaced = (replaced[0] === 'N' ? 'Ln' : 'ln') + replaced.slice(1);
+			}
+			if ((replaced[0].toLowerCase() === 'm') && 'aeiou'.includes(replaced[1])) { // Initial m
+				replaced = (replaced[0] === 'M' ? 'Bbn' : 'bbn') + replaced.slice(1);
+			}
+			let idx = replaced.toLowerCase().indexOf('nn'); // Nasalisation
+			if (idx !== -1) {
+				// handle onn
+				if (
+					idx > 0 &&
+					(replaced[idx - 1].toLowerCase() === 'o') &&
+					(idx - 2 < 0 || !'aeiou'.includes(replaced[idx - 2].toLowerCase()))
+				) {
+					const oChar = replaced[idx - 1];
+					replaced = replaced.slice(0, idx - 1) + oChar + oChar + replaced.slice(idx);
+					idx += 1;
 				}
+				replaced = replaced.slice(0, idx) + replaced.slice(idx + 2);
+				// Insert 'n' after last non-vowel before idx
+				let insertPos = 0;
+				for (let i = idx - 1; i >= 0; i--) {
+					if (!'aeiou'.includes(replaced[i].toLowerCase())) {
+						insertPos = i + 1;
+						break;
+					}
+				}
+				replaced = replaced.slice(0, insertPos) + 'n' + replaced.slice(insertPos);
 			}
 			const lastThreeChars = nt.slice(-3, -1);
 			if (lastThreeChars.toLowerCase() === 'ng') {
 				replaced = replaced.slice(0, -4) + lastThreeChars + nt[nt.length - 1];
-			}
-			if (replaced.slice(-4, -1) === 'bbn') {
-				replaced = replaced.replace('bbn', 'm', 1);
-			}
-			if (replaced.slice(-3, -1) === 'ln') {
-				replaced = replaced.slice(0, -3) + 'n' + replaced[replaced.length - 1];
 			}
 			output.push(this.format !== 'number' ? this.getMarkTone(replaced, this.placement, this.tones) : replaced);
 		}
