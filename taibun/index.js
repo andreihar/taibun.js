@@ -73,6 +73,7 @@ Invariant: system = `Tailo` (default), `POJ`, `Zhuyin`, `TLPA`, `Pingyim`, `Tong
 		   dialect = `south` (Zhangzhou-leaning, default), `north` (Quanzhou-leaning), `singapore` (Quanzhou-leaning with Singaporean characteristics)
 		   format = `mark` (diacritical), `number` (numeric), `strip` (no tones)
 		   delimiter = String that replaces the default delimiter
+		   apostrophe = true (default for Pingyim), false
 		   sandhi = `auto`, `none`, `excLast`, `inclLast`
 		   punctuation = `format` (Latin-style, default), `none` (preserve original)
 		   convertNonCjk = true, false (default)
@@ -82,6 +83,7 @@ class Converter {
 	static suffixToken = '[ЅFFX_ТКŊ]';
 	static tt = '[ТŊ_ТКŊ]';
 	static defaultDelimiter = {};
+	static defaultApostrophe = {};
 	static defaultSandhi = {};
 	static systemConfigs = {
 		'tailo': {
@@ -124,11 +126,12 @@ class Converter {
 		'咖啡': { '咖': { ka: 'ko' } }
 	};
 
-	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false, outputTokens = false } = {}) {
+	constructor({ system = 'Tailo', dialect = 'south', format = 'mark', delimiter = Converter.defaultDelimiter, apostrophe = Converter.defaultApostrophe, sandhi = Converter.defaultSandhi, punctuation = 'format', convertNonCjk = false, outputTokens = false } = {}) {
 		this.system = system.toLowerCase();
 		this.dialect = dialect.toLowerCase();
 		this.format = format;
 		this.delimiter = delimiter !== Converter.defaultDelimiter ? delimiter : this.setDefaultDelimiter();
+		this.apostrophe = apostrophe !== Converter.defaultApostrophe ? apostrophe : this.setDefaultApostrophe();
 		this.sandhi = sandhi !== Converter.defaultSandhi ? sandhi : this.setDefaultSandhi();
 		this.punctuation = punctuation;
 		this.convertNonCjk = convertNonCjk;
@@ -159,6 +162,12 @@ class Converter {
 		}
 		if (config && 'convert' in config) this.convert = { ...Object.fromEntries(Object.entries(config['convert']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])), ...config['convert'] };
 		if (config && 'convert2' in config) this.convert2 = { ...Object.fromEntries(Object.entries(config['convert2']).map(([k, v]) => [k.charAt(0).toUpperCase() + k.slice(1), v.charAt(0).toUpperCase() + v.slice(1)])), ...config['convert2'] };
+
+		// Apostrophe
+		if (this.apostrophe) {
+			const syllables = ['a', 'ah', 'ai', 'aih', 'ainn', 'ak', 'am', 'an', 'ang', 'ann', 'ap', 'at', 'au', 'ba', 'bah', 'bai', 'bak', 'ban', 'bang', 'bat', 'bau', 'be', 'beh', 'bi', 'bian', 'biat', 'biau', 'bih', 'bik', 'bin', 'bing', 'bio', 'bit', 'biu', 'bo', 'bok', 'bong', 'boo', 'bu', 'bua', 'buah', 'buan', 'buat', 'bue', 'bueh', 'bui', 'bun', 'but', 'e', 'eh', 'enn', 'ga', 'gai', 'gak', 'gam', 'gan', 'gang', 'gau', 'ge', 'geh', 'gi', 'gia', 'giah', 'giak', 'giam', 'gian', 'giang', 'giap', 'giat', 'giau', 'gik', 'gim', 'gin', 'ging', 'gio', 'gioh', 'giok', 'giong', 'giu', 'go', 'gok', 'gong', 'goo', 'gu', 'gua', 'guan', 'guat', 'gue', 'gueh', 'gui', 'gun', 'ha', 'hah', 'hai', 'haih', 'hainn', 'hak', 'ham', 'han', 'hang', 'hann', 'hannh', 'hap', 'hat', 'hau', 'haunnh', 'he', 'heh', 'hi', 'hia', 'hiah', 'hiam', 'hian', 'hiang', 'hiann', 'hiannh', 'hiap', 'hiat', 'hiau', 'hiauh', 'hik', 'him', 'hin', 'hing', 'hinn', 'hio', 'hioh', 'hiok', 'hiong', 'hip', 'hit', 'hiu', 'hiunn', 'hm', 'hmh', 'hng', 'hngh', 'ho', 'hoh', 'hok', 'hong', 'honn', 'honnh', 'hoo', 'hooh', 'hu', 'hua', 'huah', 'huai', 'huainn', 'huan', 'huann', 'huat', 'hue', 'hueh', 'hui', 'huih', 'huinn', 'hun', 'hut', 'i', 'ia', 'iah', 'iam', 'ian', 'iang', 'iann', 'iap', 'iat', 'iau', 'iaunn', 'ik', 'im', 'in', 'ing', 'inn', 'io', 'ioh', 'iok', 'iong', 'ip', 'it', 'iu', 'iunn', 'ji', 'jia', 'jiah', 'jiam', 'jian', 'jiang', 'jiap', 'jiat', 'jiau', 'jim', 'jin', 'jio', 'jiok', 'jiong', 'jip', 'jit', 'jiu', 'ju', 'juah', 'jue', 'jun', 'ka', 'kah', 'kai', 'kainn', 'kak', 'kam', 'kan', 'kang', 'kann', 'kap', 'kat', 'kau', 'kauh', 'ke', 'keh', 'kenn', 'kha', 'khah', 'khai', 'khainn', 'khak', 'kham', 'khan', 'khang', 'khann', 'khap', 'khat', 'khau', 'khaunnh', 'khe', 'kheh', 'khenn', 'khennh', 'khi', 'khia', 'khiah', 'khiak', 'khiam', 'khian', 'khiang', 'khiap', 'khiat', 'khiau', 'khih', 'khik', 'khim', 'khin', 'khing', 'khinn', 'khio', 'khioh', 'khiok', 'khiong', 'khip', 'khit', 'khiu', 'khiunn', 'khng', 'khngh', 'kho', 'khok', 'khong', 'khoo', 'khu', 'khua', 'khuah', 'khuai', 'khuan', 'khuann', 'khuat', 'khue', 'khueh', 'khuh', 'khui', 'khuinn', 'khun', 'khut', 'ki', 'kia', 'kiah', 'kiam', 'kian', 'kiann', 'kiap', 'kiat', 'kiau', 'kih', 'kik', 'kim', 'kin', 'king', 'kinn', 'kio', 'kioh', 'kiok', 'kiong', 'kip', 'kiu', 'kiunn', 'kng', 'ko', 'koh', 'kok', 'kong', 'konn', 'koo', 'ku', 'kua', 'kuah', 'kuai', 'kuainn', 'kuan', 'kuann', 'kuat', 'kue', 'kueh', 'kui', 'kuih', 'kuinn', 'kun', 'kut', 'la', 'lah', 'lai', 'lak', 'lam', 'lan', 'lang', 'lap', 'lat', 'lau', 'lauh', 'le', 'leh', 'li', 'lia', 'liah', 'liam', 'lian', 'liang', 'liap', 'liat', 'liau', 'lih', 'lik', 'lim', 'lin', 'ling', 'lio', 'lioh', 'liok', 'liong', 'lip', 'lit', 'liu', 'lo', 'loh', 'lok', 'long', 'loo', 'looh', 'lop', 'lu', 'lua', 'luah', 'luan', 'luat', 'lue', 'lueh', 'luh', 'lui', 'lun', 'lut', 'm', 'ma', 'mah', 'mai', 'mau', 'mauh', 'me', 'meh', 'mi', 'mia', 'mian', 'miau', 'mih', 'mng', 'mngh', 'moo', 'mooh', 'mua', 'mue', 'mui', 'na', 'nah', 'nai', 'nau', 'nauh', 'ne', 'neh', 'ng', 'nga', 'ngai', 'ngau', 'nge', 'ngeh', 'ngi', 'ngia', 'ngiau', 'ngiauh', 'ngiu', 'ngoo', 'ni', 'nia', 'niau', 'nih', 'niu', 'nng', 'noo', 'nua', 'o', 'oh', 'ok', 'om', 'ong', 'onn', 'oo', 'ooh', 'pa', 'pah', 'pai', 'pak', 'pan', 'pang', 'pat', 'pau', 'pe', 'peh', 'penn', 'pha', 'phah', 'phai', 'phainn', 'phak', 'phan', 'phang', 'phann', 'phau', 'phauh', 'phe', 'pheh', 'phenn', 'phi', 'phiah', 'phiak', 'phian', 'phiang', 'phiann', 'phiat', 'phiau', 'phih', 'phik', 'phin', 'phing', 'phinn', 'phio', 'phit', 'phngh', 'pho', 'phoh', 'phok', 'phong', 'phoo', 'phu', 'phua', 'phuah', 'phuan', 'phuann', 'phuat', 'phue', 'phueh', 'phuh', 'phui', 'phun', 'phut', 'pi', 'piah', 'piak', 'pian', 'piang', 'piann', 'piat', 'piau', 'pih', 'pik', 'pin', 'ping', 'pinn', 'pio', 'pit', 'piu', 'png', 'po', 'poh', 'pok', 'pong', 'poo', 'pu', 'pua', 'puah', 'puan', 'puann', 'puat', 'pue', 'pueh', 'puh', 'pui', 'puinn', 'pun', 'put', 'sa', 'sah', 'sai', 'sak', 'sam', 'san', 'sang', 'sann', 'sannh', 'sap', 'sat', 'sau', 'se', 'seh', 'senn', 'si', 'sia', 'siah', 'siak', 'siam', 'sian', 'siang', 'siann', 'siap', 'siat', 'siau', 'sih', 'sik', 'sim', 'sin', 'sing', 'sinn', 'sio', 'sioh', 'siok', 'siong', 'sip', 'sit', 'siu', 'siunn', 'sng', 'so', 'soh', 'sok', 'som', 'song', 'soo', 'su', 'sua', 'suah', 'suainn', 'suan', 'suann', 'suat', 'sue', 'sueh', 'suh', 'sui', 'sun', 'sut', 'ta', 'tah', 'tai', 'tainn', 'tak', 'tam', 'tan', 'tang', 'tann', 'tap', 'tat', 'tau', 'tauh', 'te', 'teh', 'tenn', 'tha', 'thah', 'thai', 'thak', 'tham', 'than', 'thang', 'thann', 'thap', 'that', 'thau', 'the', 'theh', 'thenn', 'thi', 'thiah', 'thiam', 'thian', 'thiann', 'thiap', 'thiat', 'thiau', 'thih', 'thik', 'thim', 'thin', 'thing', 'thinn', 'thio', 'thiok', 'thiong', 'thiu', 'thng', 'tho', 'thoh', 'thok', 'thong', 'thoo', 'thu', 'thua', 'thuah', 'thuan', 'thuann', 'thuat', 'thue', 'thuh', 'thui', 'thun', 'thut', 'ti', 'tia', 'tiah', 'tiak', 'tiam', 'tian', 'tiann', 'tiap', 'tiat', 'tiau', 'tih', 'tik', 'tim', 'tin', 'ting', 'tinn', 'tio', 'tioh', 'tiok', 'tiong', 'tit', 'tiu', 'tiuh', 'tiunn', 'tng', 'to', 'toh', 'tok', 'tom', 'tong', 'too', 'tsa', 'tsah', 'tsai', 'tsainn', 'tsak', 'tsam', 'tsan', 'tsang', 'tsann', 'tsap', 'tsat', 'tsau', 'tse', 'tseh', 'tsenn', 'tsha', 'tshah', 'tshai', 'tshak', 'tsham', 'tshan', 'tshang', 'tshann', 'tshap', 'tshat', 'tshau', 'tshauh', 'tshe', 'tsheh', 'tshenn', 'tshi', 'tshia', 'tshiah', 'tshiak', 'tshiam', 'tshian', 'tshiang', 'tshiann', 'tshiap', 'tshiat', 'tshiau', 'tshih', 'tshik', 'tshim', 'tshin', 'tshing', 'tshinn', 'tshio', 'tshioh', 'tshiok', 'tshiong', 'tship', 'tshit', 'tshiu', 'tshiunn', 'tshng', 'tshngh', 'tsho', 'tshoh', 'tshok', 'tshong', 'tshoo', 'tshu', 'tshua', 'tshuah', 'tshuan', 'tshuang', 'tshuann', 'tshue', 'tshueh', 'tshuh', 'tshui', 'tshun', 'tshut', 'tsi', 'tsia', 'tsiah', 'tsiam', 'tsian', 'tsiang', 'tsiann', 'tsiap', 'tsiat', 'tsiau', 'tsih', 'tsik', 'tsim', 'tsin', 'tsing', 'tsinn', 'tsio', 'tsioh', 'tsiok', 'tsiong', 'tsip', 'tsit', 'tsiu', 'tsiuh', 'tsiunn', 'tsng', 'tso', 'tsoh', 'tsok', 'tsong', 'tsoo', 'tsu', 'tsua', 'tsuah', 'tsuainn', 'tsuan', 'tsuann', 'tsuat', 'tsue', 'tsueh', 'tsuh', 'tsui', 'tsun', 'tsut', 'tu', 'tua', 'tuah', 'tuan', 'tuann', 'tuat', 'tue', 'tuh', 'tui', 'tuinn', 'tun', 'tut', 'u', 'ua', 'uah', 'uai', 'uainn', 'uan', 'uang', 'uann', 'uat', 'ue', 'ueh', 'uh', 'ui', 'uih', 'uinn', 'un', 'ut'];
+			this.syllables = new Set(syllables.map(s => this.stripMark(this.conversionFunc([s, false]))));
+		}
 
 		// Dialect
 		this.sandhiConversion = { '1': '7', '7': '3', '3': '2', '2': '1', '5': '7', 'p4': 'p8', 't4': 't8', 'k4': 'k8', 'h4': '2', 'p8': 'p4', 't8': 't4', 'k8': 'k4', 'h8': '3' };
@@ -254,12 +263,10 @@ class Converter {
 			word = this.markToNumber(word);
 		}
 		if (this.format === 'strip') {
-			switch (this.system) {
-				case 'tlpa': word = word.replace(/[1234578]/g, ''); break;
-				case 'zhuyin': word = word.replace(/[ˋ˪ˊ˫˙]/g, ''); break;
-				case 'ipa': word = word.replace(/[¹²³⁴⁵]/g, ''); break;
-				default: word = word.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); break;
-			}
+			word = this.stripMark(word);
+		}
+		if (this.delimiter === '' && this.apostrophe) {
+			return this.addApostrophes(word);
 		}
 		return word.replace(/--/g, Converter.suffixToken).replace(/-/g, this.delimiter).replace(new RegExp(Converter.suffixToken.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), '--');
 	}
@@ -274,6 +281,15 @@ class Converter {
 			return '';
 		}
 		return '-';
+	}
+
+
+	// Helper functions to set disambiguating apostrophe according to transliteration system if wasn't explicitly defined by user
+	setDefaultApostrophe() {
+		if (this.system === 'pingyim') {
+			return true;
+		}
+		return false;
 	}
 
 
@@ -408,6 +424,67 @@ class Converter {
 			}
 		}
 		return resultList;
+	}
+
+
+	// Helper function to remove tone markings
+	stripMark(input) {
+		switch (this.system) {
+			case 'tlpa': input = input.replace(/[1234578]/g, ''); break;
+			case 'zhuyin': input = input.replace(/[ˋ˪ˊ˫˙]/g, ''); break;
+			case 'ipa': input = input.replace(/[¹²³⁴⁵]/g, ''); break;
+			default: input = input.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); break;
+		}
+		return input;
+	}
+
+
+	// Helper function to determine if an apostrophe is needed between two syllables
+	needsApostrophe(s1, s2) {
+		function normalise(s) {
+			return s.normalize('NFD').replace(/\p{Mn}/gu, '').toLowerCase();
+		}
+		const s1n = normalise(s1);
+		const s2n = normalise(s2);
+		const combined = s1n + s2n;
+		// Case 1: merges into a valid syllable
+		if (this.syllables && this.syllables.has(combined)) {
+			return true;
+		}
+		// Case 2: alternative segmentation exists
+		for (let i = 1; i < combined.length; i++) {
+			const alt1 = combined.slice(0, i);
+			const alt2 = combined.slice(i);
+			if (!(alt1 === s1n && alt2 === s2n)) {
+				if (this.syllables && this.syllables.has(alt1) && this.syllables.has(alt2)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+
+	// Helper function to add apostrophes between syllables where needed to prevent ambiguity
+	addApostrophes(syllables) {
+		function splitSyllables(s) {
+			return s.split('--').flatMap((part, i) =>
+				part.split('-').map((sp, j) => (sp ? (i && j === 0 ? '--' + sp : sp) : null)).filter(Boolean)
+			);
+		}
+		const syllArr = splitSyllables(syllables);
+		if (syllArr.length === 0) return '';
+		let result = syllArr[0];
+		for (let i = 0; i < syllArr.length - 1; i++) {
+			const s1 = syllArr[i];
+			const s2 = syllArr[i + 1];
+			if (this.needsApostrophe(s1, s2)) {
+				result += "'" + s2;
+			} else {
+				result += s2;
+			}
+		}
+		return result;
 	}
 
 
