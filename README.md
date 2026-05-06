@@ -54,9 +54,11 @@ Includes word tokeniser for Taiwanese Hokkien.
             <li><a href="#dialect">Dialect</a></li>
             <li><a href="#format">Format</a></li>
             <li><a href="#delimiter">Delimiter</a></li>
+            <li><a href="#apostrophe">Apostrophe</a></li>
             <li><a href="#sandhi">Sandhi</a></li>
             <li><a href="#punctuation">Punctuation</a></li>
             <li><a href="#convert-non-cjk">Convert non-CJK</a></li>
+            <li><a href="#output-tokens">Output Tokens</a></li>
           </ul>
         </li>
         <li>
@@ -104,7 +106,7 @@ $ npm install taibun --save
 
 ```js
 // Constructor
-c = new Converter({ system, dialect, format, delimiter, sandhi, punctuation, convertNonCjk });
+c = new Converter({ system, dialect, format, delimiter, apostrophe, sandhi, punctuation, convertNonCjk, outputTokens });
 
 // Transliterate Chinese characters
 c.get(input);
@@ -164,6 +166,22 @@ Default value depends on the chosen `system`:
 | ---- | ------- | ------ | ------- |
 | 台灣 | Tâi-uân | Tâiuân | Tâi uân |
 
+#### Apostrophe
+
+`apostrophe` Boolean - controls whether apostrophes are inserted to disambiguate syllable boundaries when no delimiter is used. When delimiter is set to `''`, adjacent syllables may become ambiguous when written together. Apostrophes can be inserted to explicitly separate syllables and prevent misreading. This option has no effect when a non-empty delimiter is used.
+
+`true` - insert apostrophes where necessary to clarify syllable boundaries
+`false` - do not insert apostrophes
+
+Default value depends on the chosen `system`:
+
+* `true` - for `Pingyim`
+* `false` - for `Tailo`, `POJ`, `Tongiong`, `Zhuyin`, `TLPA`, `IPA`
+
+| text | true   | false |
+| ---- | ------ | ----- |
+| 囡仔 | Ggǐn'ǎ | Ggǐnǎ |
+
 #### Sandhi
 
 `sandhi` String - applies the [sandhi rules of Taiwanese Hokkien][sandhi-wiki].
@@ -211,6 +229,17 @@ Sandhi rules also change depending on the dialect chosen.
 | text      | false                   | true                    |
 | --------- | ----------------------- | ----------------------- |
 | 我食pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ |
+
+#### Output Tokens
+
+`outputTokens` Boolean - controls whether the output is returned as a list of tokenised elements instead of a single formatted string.
+
+* `true` - returns a list of tokens after conversion
+* `false` (default) - returns a fully formatted sentence as a string
+
+| text         | false           | true                              |
+| ------------ | --------------- | --------------------------------- |
+| 朋友，你好！ | Pîng-iú, lí hó! | ['Pîng-iú', ',', 'lí', 'hó', '!'] |
 
 ### Tokeniser
 
@@ -306,6 +335,15 @@ c = new Converter({ system: 'Pingyim', delimiter: '-' });
 c.get("先生講，學生恬恬聽。");
 >> Siān-snī gǒng, hág-sīng diâm-diâm tinā.
 
+//// Apostrophe
+c = new Converter({ delimiter: '' }); // for Tailo, apostrophe false by default
+c.get("太空朋友");
+>> Thàikhong pîngiú
+
+c = new Converter({ delimiter: '', apostrophe: true });
+c.get("太空朋友");
+>> Thàikhong pîng'iú
+
 //// Sandhi
 c = new Converter(); // for Tailo, sandhi none by default
 c.get("這是你的茶桌仔無");
@@ -340,6 +378,15 @@ c.get("我食pháng");
 c = new Converter({ system: 'Zhuyin', convertNonCjk: true });
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
+
+//// Output Tokens
+c = new Converter(); // false outputTokens default
+c.get("太空朋友，恁好！恁食飽未？");
+>> Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē?
+
+c = new Converter({ outputTokens: true });
+c.get("太空朋友，恁好！恁食飽未？");
+>> ['Thài-khong', 'pîng-iú', ',', 'lín-hó', '!', 'Lín', 'tsia̍h-pá', 'buē', '?']
 
 
 // Tokeniser
@@ -417,6 +464,7 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 
 
 <!-- MARKDOWN LINKS -->
+<!-- Badges and their links -->
 [contributions]: https://github.com/andreihar/taibun.js/issues
 [contributions-badge]: https://img.shields.io/badge/Contributions-Welcomed-be132d?style=for-the-badge&logo=github
 [demo]: https://taibun.andreihar.com/
@@ -433,15 +481,13 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 [py-link]: https://github.com/andreihar/taibun
 [downloads-badge]: https://img.shields.io/npm/d18m/taibun.svg?style=for-the-badge
 
+<!-- Technical links -->
 [npm]: https://www.npmjs.com/package/taibun
 [bug]: https://github.com/andreihar/taibun.js/issues
 [online-dictionary]: http://ip194097.ntcu.edu.tw/ungian/soannteng/chil/Taihoa.asp
 [itaigi-dictionary]: https://itaigi.tw/
 [data-via]: https://github.com/ChhoeTaigi/ChhoeTaigiDatabase
 [data-cc]: https://creativecommons.org/licenses/by-sa/4.0/deed.en
-[samuel-github]: https://github.com/SSSam
-[samuel-linkedin]: https://www.linkedin.com/in/samuel-jen/
-
 [tailo-wiki]: https://en.wikipedia.org/wiki/T%C3%A2i-u%C3%A2n_L%C3%B4-m%C3%A1-j%C4%AB_Phing-im_Hong-%C3%A0n
 [poj-wiki]: https://en.wikipedia.org/wiki/Pe%CC%8Dh-%C5%8De-j%C4%AB
 [zhuyin-wiki]: https://en.wikipedia.org/wiki/Taiwanese_Phonetic_Symbols
@@ -454,3 +500,7 @@ The data is licensed under [CC BY-SA 4.0][data-cc]
 [singapore-wiki]: https://en.wikipedia.org/wiki/Singaporean_Hokkien
 [nltk-tokenize]: https://nltk.org/api/nltk.tokenize.html
 [sandhi-wiki]: https://en.wikipedia.org/wiki/Taiwanese_Hokkien#Tone%20sandhi:~:text=thng%E2%9F%A9%20(%22soup%22).-,Tone%20sandhi,-%5Bedit%5D
+
+<!-- Socials -->
+[samuel-github]: https://github.com/SSSam
+[samuel-linkedin]: https://www.linkedin.com/in/samuel-jen/
