@@ -54,9 +54,11 @@
             <li><a href="#dialect">Dialect</a></li>
             <li><a href="#format">Format</a></li>
             <li><a href="#delimiter">Delimiter</a></li>
+            <li><a href="#apostrophe">Apostrophe</a></li>
             <li><a href="#sandhi">Sandhi</a></li>
             <li><a href="#punctuation">Punctuation</a></li>
             <li><a href="#convert-non-cjk">Convert non-CJK</a></li>
+            <li><a href="#output-tokens">Output Tokens</a></li>
           </ul>
         </li>
         <li>
@@ -104,7 +106,7 @@ $ npm install taibun --save
 
 ```js
 // 建構子
-c = new Converter({ system, dialect, format, delimiter, sandhi, punctuation, convertNonCjk });
+c = new Converter({ system, dialect, format, delimiter, apostrophe, sandhi, punctuation, convertNonCjk, outputTokens });
 
 // 音譯中文字
 c.get(input);
@@ -164,6 +166,22 @@ c.get(input);
 | ---- | ------- | ------ | ------- |
 | 台灣 | Tâi-uân | Tâiuân | Tâi uân |
 
+#### Apostrophe
+
+`apostrophe` Boolean - 控制在未使用分隔符號時是否插入撇號來消除音節邊界歧義。當分隔符號設定為 `''` 時，相鄰音節連寫可能會產生歧義。可以插入撇號來明確分隔音節，防止誤讀。當使用非空分隔符號時，此選項無效。
+
+`true` - 必要時加上撇號以明確音節邊界
+`false` - 不要加撇號
+
+預設值取決於所選的 `system`:
+
+* `true` - 對於 `Pingyim`
+* `false` - 對於 `Tailo`, `POJ`, `Tongiong`, `Zhuyin`, `TLPA`, `IPA`
+
+| 文本 | true   | false |
+| ---- | ------ | ----- |
+| 囡仔 | Ggǐn'ǎ | Ggǐnǎ |
+
 #### Sandhi
 
 `sandhi` String - 應用[臺灣話變調規則][sandhi-wiki]。
@@ -211,6 +229,17 @@ c.get(input);
 | 文本      | false                   | true                    |
 | --------- | ----------------------- | ----------------------- |
 | 我食pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ pháng | ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ |
+
+#### Output Tokens
+
+`output_tokens` Boolean - 控制輸出是以分詞元素列表的形式傳回，還是以單一格式化字串的形式傳回。
+
+* `true` - 轉換後回傳詞元列表。
+* `false` (預設) - 傳回格式化後的句子字串。
+
+| 文本         | false           | true                              |
+| ------------ | --------------- | --------------------------------- |
+| 朋友，你好！ | Pîng-iú, lí hó! | ['Pîng-iú', ',', 'lí', 'hó', '!'] |
 
 ### Tokeniser
 
@@ -306,6 +335,15 @@ c = new Converter({ system: 'Pingyim', delimiter: '-' });
 c.get("先生講，學生恬恬聽。");
 >> Siān-snī gǒng, hág-sīng diâm-diâm tinā.
 
+//// Apostrophe
+c = new Converter({ delimiter: '' }); // 在 Tailo 中, apostrophe 預設值: false
+c.get("太空朋友");
+>> Thàikhong pîngiú
+
+c = new Converter({ delimiter: '', apostrophe: true });
+c.get("太空朋友");
+>> Thàikhong pîng'iú
+
 //// Sandhi
 c = new Converter(); // 在 Tailo 中，sandhi 預設值: none
 c.get("這是你的茶桌仔無");
@@ -340,6 +378,15 @@ c.get("我食pháng");
 c = new Converter({ system: 'Zhuyin', convertNonCjk: true });
 c.get("我食pháng");
 >> ㆣㄨㄚˋ ㄐㄧㄚㆷ˙ ㄆㄤˋ
+
+//// Output Tokens
+c = new Converter(); // outputTokens 預設值: false
+c.get("太空朋友，恁好！恁食飽未？");
+>> Thài-khong pîng-iú, lín-hó! Lín tsia̍h-pá buē?
+
+c = new Converter({ outputTokens: true });
+c.get("太空朋友，恁好！恁食飽未？");
+>> ['Thài-khong', 'pîng-iú', ',', 'lín-hó', '!', 'Lín', 'tsia̍h-pá', 'buē', '?']
 
 
 // Tokeniser
@@ -417,6 +464,7 @@ isCjk('我食pháng');
 
 
 <!-- MARKDOWN LINKS -->
+<!-- Badges and their links -->
 [contributions]: https://github.com/andreihar/taibun.js/issues
 [contributions-badge]: https://img.shields.io/badge/歡迎-貢獻協助-be132d?style=for-the-badge&logo=github
 [demo]: https://taibun.andreihar.com/
@@ -433,15 +481,13 @@ isCjk('我食pháng');
 [py-link]: https://github.com/andreihar/taibun
 [downloads-badge]: https://img.shields.io/npm/d18m/taibun.svg?style=for-the-badge&label=下載
 
+<!-- Technical links -->
 [npm]: https://www.npmjs.com/package/taibun
 [bug]: https://github.com/andreihar/taibun.js/issues
 [online-dictionary]: http://ip194097.ntcu.edu.tw/ungian/soannteng/chil/Taihoa.asp
 [itaigi-dictionary]: https://itaigi.tw/
 [data-via]: https://github.com/ChhoeTaigi/ChhoeTaigiDatabase
 [data-cc]: https://creativecommons.org/licenses/by-sa/4.0/deed.zh_TW
-[samuel-github]: https://github.com/SSSam
-[samuel-linkedin]: https://www.linkedin.com/in/samuel-jen/
-
 [tailo-wiki]: https://zh.wikipedia.org/zh-tw/%E8%87%BA%E7%81%A3%E9%96%A9%E5%8D%97%E8%AA%9E%E7%BE%85%E9%A6%AC%E5%AD%97%E6%8B%BC%E9%9F%B3%E6%96%B9%E6%A1%88
 [poj-wiki]: https://zh.wikipedia.org/zh-tw/%E7%99%BD%E8%A9%B1%E5%AD%97
 [zhuyin-wiki]: https://zh.wikipedia.org/zh-tw/%E8%87%BA%E7%81%A3%E6%96%B9%E9%9F%B3%E7%AC%A6%E8%99%9F
@@ -454,3 +500,7 @@ isCjk('我食pháng');
 [singapore-wiki]: https://zh.wikipedia.org/wiki/%E6%96%B0%E5%8A%A0%E5%9D%A1%E7%A6%8F%E5%BB%BA%E8%A9%B1
 [nltk-tokenize]: https://nltk.org/api/nltk.tokenize.html
 [sandhi-wiki]: https://zh.wikipedia.org/zh-tw/%E8%87%BA%E7%81%A3%E8%A9%B1#%E9%80%A3%E8%AE%80%E8%AE%8A%E8%AA%BF:~:text=%E3%80%82%5B144%5D-,%E9%80%A3%E8%AE%80%E8%AE%8A%E8%AA%BF,-%E9%80%A3%E8%AE%80%E8%AE%8A%E8%AA%BF
+
+<!-- Socials -->
+[samuel-github]: https://github.com/SSSam
+[samuel-linkedin]: https://www.linkedin.com/in/samuel-jen/
